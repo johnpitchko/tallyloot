@@ -1,0 +1,19 @@
+# == Schema Information
+#
+# Table name: households
+#
+#  id                     :integer          not null, primary key
+#  province               :string
+#  retirement_income_goal :integer
+#  sample_data            :boolean          default(FALSE), not null
+#  created_at             :datetime         not null
+#  updated_at             :datetime         not null
+#
+non_retired:
+  retirement_income_goal: 120000
+retired:
+  retirement_income_goal: 80000
+onboarding:
+  retirement_income_goal: 100000
+single:
+  retirement_income_goal: 80000

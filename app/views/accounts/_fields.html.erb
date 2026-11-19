@@ -1,0 +1,80 @@
+<div class="columns">
+  <div class="column is-half">
+    <div class="field">
+      <label class="label">Name</label>
+      <div class="control">
+        <%= form.text_field :name, class: "input", placeholder: "Account name" %>
+      </div>
+    </div>
+  </div>
+  <div class="column is-half">
+    <div class="field">
+      <label class="label">Balance</label>
+      <div class="field has-addons">
+        <div class="control">
+          <span class="button is-static">$</span>
+        </div>
+        <div class="control is-expanded">
+          <%= form.text_field :balance, class: "input", inputmode: "numeric", placeholder: "0",
+              data: { controller: "currency-input", action: "focus->currency-input#focus blur->currency-input#blur" } %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="columns">
+  <div class="column is-half">
+    <div class="field">
+      <label class="label">Annual Contribution</label>
+      <div class="field has-addons">
+        <div class="control">
+          <span class="button is-static">$</span>
+        </div>
+        <div class="control is-expanded">
+          <%= form.text_field :contribution,
+                            class: "input",
+                            inputmode: "numeric",
+                            placeholder: "0",
+                            disabled: !account.allows_contributions?,
+                            data: { controller: "currency-input", action: "focus->currency-input#focus blur->currency-input#blur" } %>
+        </div>
+      </div>
+      <% unless account.allows_contributions? %>
+        <p class="help">This account type does not allow contributions</p>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<% if account.conversion_age? || account.requires_jurisdiction? %>
+  <div class="columns">
+    <% if account.conversion_age? %>
+      <div class="column is-half">
+        <div class="field">
+          <label class="label">Conversion Age</label>
+          <div class="control">
+            <%= form.number_field :conversion_age, class: "input", min: 50, max: 71 %>
+          </div>
+          <p class="help">At what age have you/do you plan on converting? (max 71)</p>
+        </div>
+      </div>
+    <% end %>
+    <% if account.requires_jurisdiction? %>
+      <div class="column is-half">
+        <div class="field">
+          <label class="label">Province</label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <%= form.select :provincial_jurisdiction,
+                          Account.jurisdiction_options,
+                          { include_blank: "Select province..." },
+                          { class: "input" } %>
+            </div>
+          </div>
+          <p class="help">Province where account is registered</p>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% end %>

@@ -1,0 +1,42 @@
+version: 2
+
+# Version updates are deliberately quiet. A daily, ungrouped schedule produced
+# a backlog of thirteen unmerged PRs, which caused GitHub to pause Dependabot
+# entirely — so the security alerts that mattered never got their remediation
+# PRs. Monthly and grouped keeps the signal-to-noise ratio high enough that the
+# PRs actually get reviewed.
+#
+# Note: `ignore` rules do not apply to Dependabot *security* updates. Majors are
+# excluded from routine bumps only; a major release is still proposed when it is
+# the fix for an advisory.
+updates:
+- package-ecosystem: bundler
+  directory: "/"
+  schedule:
+    interval: monthly
+  open-pull-requests-limit: 5
+  groups:
+    # One PR per month for all minor/patch gem updates.
+    bundler:
+      patterns:
+      - "*"
+      update-types:
+      - minor
+      - patch
+  ignore:
+    # Majors are picked up deliberately rather than by PR firehose — they need a
+    # changelog read and usually a code change (e.g. puma 6 -> 8).
+    - dependency-name: "*"
+      update-types:
+      - version-update:semver-major
+
+- package-ecosystem: github-actions
+  directory: "/"
+  schedule:
+    interval: monthly
+  open-pull-requests-limit: 5
+  groups:
+    # Action majors are usually just a runner/node bump, so they stay in-group.
+    github-actions:
+      patterns:
+      - "*"

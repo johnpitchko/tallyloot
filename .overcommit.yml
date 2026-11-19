@@ -1,0 +1,8 @@
+---
+gemfile: Gemfile
+
+PreCommit:
+  RuboCop:
+    enabled: true
+    on_warn: fail
+    command: ['bin/rubocop']

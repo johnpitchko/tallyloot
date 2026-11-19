@@ -1,0 +1,73 @@
+<div data-controller="dollar-mode">
+  <div class="is-flex is-justify-content-flex-end mb-3">
+    <div class="field has-addons">
+      <p class="control">
+        <button class="button is-small" data-dollar-mode-target="nominalBtn" data-action="click->dollar-mode#showNominal">Future $</button>
+      </p>
+      <p class="control">
+        <button class="button is-small" data-dollar-mode-target="realBtn" data-action="click->dollar-mode#showReal">Today's $</button>
+      </p>
+    </div>
+  </div>
+  <div class="table-container">
+    <table class="table is-striped is-hoverable is-fullwidth is-narrow" id="projection_details_table">
+      <thead>
+        <tr>
+          <th rowspan="2" class="is-sticky-col">Year</th>
+          <% @household.users.each do |user| %>
+            <th rowspan="2" class="has-text-centered"><%= user.name %><br>Age</th>
+          <% end %>
+          <% @account_type_names.each_with_index do |type, idx| %>
+            <th colspan="2" class="has-text-centered <%= column_group_class(idx) %>">
+              <%= type.demodulize.titleize %>
+            </th>
+          <% end %>
+          <th colspan="2" class="has-text-centered group-border">Total</th>
+        </tr>
+        <tr>
+          <% @account_type_names.each_with_index do |type, idx| %>
+            <th class="has-text-right <%= column_group_class(idx) %>">+/-</th>
+            <th class="has-text-right">Value</th>
+          <% end %>
+          <th class="has-text-right group-border">+/-</th>
+          <th class="has-text-right">Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @periods.each do |period| %>
+          <tr id="projection_net_worth_row_<%= period.year %>">
+            <td class="is-sticky-col"><strong><%= period.year %></strong></td>
+            <% @household.users.each do |user| %>
+              <td class="has-text-centered"><%= user.age_in_year(period.year) %></td>
+            <% end %>
+            <% @account_type_names.each_with_index do |type, idx| %>
+              <% type_summary = period.account_types.find { |s| s.type == type } %>
+              <td
+                class="<%= net_change_td_class(type_summary&.net_change, border_class: column_group_class(idx)) %>"
+                data-tooltip="<%= financial_summary_tooltip(type_summary) %>"
+              >
+                <span data-dollar-mode-target="nominalValue"><%= format_net_change(type_summary&.net_change) %></span>
+                <span data-dollar-mode-target="realValue" class="is-hidden"><%= format_net_change(period.deflate(type_summary&.net_change || 0)) %></span>
+              </td>
+              <td class="has-text-right">
+                <span data-dollar-mode-target="nominalValue"><%= number_to_currency(type_summary&.ending_balance || 0, precision: 0) %></span>
+                <span data-dollar-mode-target="realValue" class="is-hidden"><%= number_to_currency(period.deflate(type_summary&.ending_balance || 0), precision: 0) %></span>
+              </td>
+            <% end %>
+            <td
+              class="<%= net_change_td_class(period.net_change) %>"
+              data-tooltip="<%= financial_summary_tooltip(period) %>"
+            >
+              <span data-dollar-mode-target="nominalValue"><%= format_net_change(period.net_change) %></span>
+              <span data-dollar-mode-target="realValue" class="is-hidden"><%= format_net_change(period.deflate(period.net_change)) %></span>
+            </td>
+            <td class="has-text-right">
+              <span data-dollar-mode-target="nominalValue"><%= number_to_currency(period.ending_balance, precision: 0) %></span>
+              <span data-dollar-mode-target="realValue" class="is-hidden"><%= number_to_currency(period.deflate(period.ending_balance), precision: 0) %></span>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

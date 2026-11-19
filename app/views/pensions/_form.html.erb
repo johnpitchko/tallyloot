@@ -1,0 +1,30 @@
+<%= form_with model: [@user, @pension] do |form| %>
+
+  <% if @pension.errors.any? %>
+    <div class="notification is-danger is-light" id="pension_errors">
+      <ul>
+        <% @pension.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= render "pensions/fields", form: form %>
+
+  <div class="field is-grouped mt-4">
+    <div class="control">
+      <%= form.submit @pension.persisted? ? "Update Pension" : "Create Pension", class: "button is-primary" %>
+    </div>
+    <div class="control">
+      <%= link_to "Cancel", root_path, class: "button is-light" %>
+    </div>
+    <% if @pension.persisted? %>
+      <div class="control ml-auto">
+        <%= link_to "Delete Pension", user_pension_path(@user, @pension),
+            class: "button is-danger is-outlined",
+            data: { turbo_method: :delete, turbo_confirm: "Are you sure you want to delete #{@pension.name}? This cannot be undone." } %>
+      </div>
+    <% end %>
+  </div>
+<% end %>

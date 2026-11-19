@@ -1,0 +1,6 @@
+<%= turbo_frame_tag "person_#{@user.id}" do %>
+  <div class="box my-3 p-4 workspace-form" id="edit_user_<%= @user.id %>">
+    <h2 class="title is-6 mb-3">Edit <%= @user.name.presence || "Person" %></h2>
+    <%= render "form", user: @user %>
+  </div>
+<% end %>

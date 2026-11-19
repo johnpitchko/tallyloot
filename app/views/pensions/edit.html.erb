@@ -1,0 +1,7 @@
+<%= turbo_frame_tag @pension do %>
+  <div class="box my-3 p-4 workspace-form" id="edit_pension_<%= @pension.id %>">
+    <h2 class="title is-6 mb-1">Edit Pension</h2>
+    <p class="subtitle is-7 mb-3"><%= @user.name %> &mdash; <%= @pension.name %></p>
+    <%= render "form" %>
+  </div>
+<% end %>

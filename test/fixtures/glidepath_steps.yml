@@ -1,0 +1,38 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+# This model initially had no columns defined. If you add columns to the
+# model remove the "{}" from the fixture names and add the columns immediately
+# below each fixture, per the syntax in the comments below
+#
+# == Schema Information
+#
+# Table name: glidepath_steps
+#
+#  id            :integer          not null, primary key
+#  start_age     :integer          not null
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#  allocation_id :integer          not null
+#  glidepath_id  :integer          not null
+#
+# Indexes
+#
+#  index_glidepath_steps_on_allocation_id  (allocation_id)
+#  index_glidepath_steps_on_glidepath_id   (glidepath_id)
+#
+# Foreign Keys
+#
+#  allocation_id  (allocation_id => allocations.id)
+#  glidepath_id   (glidepath_id => glidepaths.id)
+#
+step_25:
+  glidepath: standard_retirement
+  allocation: very_aggressive
+  start_age: 25
+step_45:
+  glidepath: standard_retirement
+  allocation: aggressive
+  start_age: 45
+step_65:
+  glidepath: standard_retirement
+  allocation: balanced
+  start_age: 65

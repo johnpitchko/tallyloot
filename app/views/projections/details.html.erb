@@ -1,0 +1,67 @@
+<div class="container" id="projection_details">
+  <div class="level">
+    <div class="level-left">
+      <div class="level-item">
+        <h1 class="title is-3">Projection Details</h1>
+      </div>
+    </div>
+    <div class="level-right">
+      <div class="level-item">
+        <%= link_to "Back to Dashboard", root_path, class: "button" %>
+      </div>
+    </div>
+  </div>
+
+  <div class="tabs is-boxed mb-0" id="projection_details_tabs">
+    <ul>
+      <li class="<%= 'is-active' if @tab == 'net_worth' %>">
+        <%= link_to "Net Worth", details_projection_path(tab: 'net_worth') %>
+      </li>
+      <li class="<%= 'is-active' if @tab == 'income' %>">
+        <%= link_to "Income", details_projection_path(tab: 'income') %>
+      </li>
+    </ul>
+  </div>
+
+  <div class="box" style="border-top-left-radius: 0;">
+    <% if @tab == 'income' %>
+      <%= render 'projections/income_table' %>
+    <% else %>
+      <%= render 'projections/net_worth_table' %>
+    <% end %>
+  </div>
+
+  <div class="content mt-4" id="projection_details_legend">
+    <% if @tab == 'income' %>
+      <p class="is-size-7 has-text-grey">
+        <strong>Future $</strong>
+        shows nominal values adjusted for assumed inflation of
+        <%= number_to_percentage((@household.portfolio&.inflation_rate || 0.02) * 100, precision: 1) %>
+        per year.
+        <strong>Today's $</strong>
+        shows the equivalent purchasing power in current dollars.
+        <strong>Benefits</strong>
+        includes government benefits (CPP, OAS, etc.).
+        <strong>Pensions</strong>
+        includes defined benefit pension income.
+        <strong>Withdrawals</strong>
+        shows amounts withdrawn from accounts.
+        <strong>Total Income</strong>
+        is the sum of all income sources.
+      </p>
+    <% else %>
+      <p class="is-size-7 has-text-grey">
+        <strong>Future $</strong>
+        shows nominal values adjusted for assumed inflation of
+        <%= number_to_percentage((@household.portfolio&.inflation_rate || 0.02) * 100, precision: 1) %>
+        per year.
+        <strong>Today's $</strong>
+        shows the equivalent purchasing power in current dollars.
+        <strong>+/-</strong>
+        shows net change in value (contributions, withdrawals, and growth combined). Hover for details.
+        <strong>Value</strong>
+        shows end-of-year balance.
+      </p>
+    <% end %>
+  </div>
+</div>

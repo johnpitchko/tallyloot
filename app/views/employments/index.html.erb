@@ -1,0 +1,23 @@
+<section class="section" id="employments">
+  <h1 class="title is-3">Post-Retirement Employment</h1>
+  <p class="subtitle is-6">
+    Income you expect to earn from part-time work, consulting, or contract roles after retiring.
+    This reduces how much you need to withdraw from savings each year.
+  </p>
+
+  <% @household.users.each do |user| %>
+    <div class="panel" id="user_<%= user.id %>_employment">
+      <div class="panel-heading">
+        <h3><%= user.name %>'s Post-Retirement Employment</h3>
+      </div>
+
+      <% if user.employment %>
+        <%= link_to edit_user_employment_path(user, user.employment),
+            class: "panel-block is-justify-content-space-between",
+            id: "employment_#{user.employment.id}" do %>
+          <%= render "employment", employment: user.employment, user: user %>
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
+</section>

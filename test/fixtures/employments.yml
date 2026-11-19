@@ -1,0 +1,55 @@
+# == Schema Information
+#
+# Table name: employments
+#
+#  id            :integer          not null, primary key
+#  annual_income :integer          default(0), not null
+#  currency_code :string           default("CAD"), not null
+#  end_age       :integer          not null
+#  label         :string
+#  start_age     :integer          not null
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#  user_id       :integer          not null
+#
+# Indexes
+#
+#  index_employments_on_user_id  (user_id) UNIQUE
+#
+# Foreign Keys
+#
+#  user_id  (user_id => users.id)
+#
+# Post-retirement employment for working users (no income configured yet)
+john_employment:
+  user: working_user_john
+  label: Post-retirement employment
+  annual_income: 0
+  start_age: 65
+  end_age: 70
+  currency_code: CAD
+
+jane_employment:
+  user: working_user_jane
+  label: Post-retirement employment
+  annual_income: 0
+  start_age: 65
+  end_age: 70
+  currency_code: CAD
+
+# Retired users - bob has active consulting income configured
+bob_employment:
+  user: retired_user_bob
+  label: Part-time consulting
+  annual_income: 24000
+  start_age: 65
+  end_age: 72
+  currency_code: CAD
+
+sue_employment:
+  user: retired_user_sue
+  label: Post-retirement employment
+  annual_income: 0
+  start_age: 65
+  end_age: 70
+  currency_code: CAD

@@ -1,0 +1,298 @@
+<% content_for :title, "What If?" %>
+
+<div id="what_if_page">
+  <div class="mb-4">
+    <h1 class="title">What If?</h1>
+    <p class="subtitle">Adjust these levers to instantly see how key decisions affect your retirement plan. Nothing is saved.</p>
+  </div>
+
+  <div class="columns">
+
+    <%# Levers column — one box per user %>
+    <div class="column is-one-third">
+      <%= form_with url: what_if_path, method: :get,
+          data: { controller: "simulation-form", turbo_frame: "what_if_results",
+                  action: "change->simulation-form#schedule input->simulation-form#schedule" } do |f| %>
+
+        <% @household.users.each do |user| %>
+          <% cpp = user.benefits.find { |b| b.is_a?(Benefit::Cpp) } %>
+          <% oas = user.benefits.find { |b| b.is_a?(Benefit::Oas) } %>
+          <% emp = user.employment %>
+
+          <div class="box" id="what_if_user_<%= user.id %>">
+            <p class="title is-6"><%= user.name %></p>
+
+            <%# Retire At %>
+            <div class="field" id="what_if_retire_at_<%= user.id %>">
+              <label class="label" for="users_<%= user.id %>_retirement_age">Retire At</label>
+              <div class="control">
+                <div class="select is-fullwidth">
+                  <select name="users[<%= user.id %>][retirement_age]" id="users_<%= user.id %>_retirement_age">
+                    <% (50..75).each do |age| %>
+                      <option value="<%= age %>"
+                        <%= "selected" if (params.dig(:users, user.id.to_s, :retirement_age).presence&.to_i || user.retirement_age) == age %>>
+                        Age <%= age %><%= " (planned)" if age == user.retirement_age %>
+                      </option>
+                    <% end %>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <%# Monthly Savings ± %>
+            <div class="field" id="what_if_monthly_savings_<%= user.id %>">
+              <label class="label" for="users_<%= user.id %>_monthly_savings_delta">
+                Monthly Savings
+                <span class="info-tooltip" data-tooltip="Spread across this person's savings accounts. Positive to save more, negative to save less.">?</span>
+              </label>
+              <div class="field has-addons mb-0">
+                <div class="control">
+                  <span class="button is-static">±</span>
+                </div>
+                <div class="control is-expanded">
+                  <input type="number"
+                    id="users_<%= user.id %>_monthly_savings_delta"
+                    name="users[<%= user.id %>][monthly_savings_delta]"
+                    class="input"
+                    step="100"
+                    placeholder="0"
+                    value="<%= params.dig(:users, user.id.to_s, :monthly_savings_delta).presence %>">
+                </div>
+                <div class="control">
+                  <span class="button is-static">$/mo</span>
+                </div>
+              </div>
+            </div>
+
+            <%# Government Benefits — CPP and OAS side-by-side at landmark ages %>
+            <% if cpp || oas %>
+              <p class="heading has-text-grey mt-4 mb-2">
+                Government Benefits
+                <span class="info-tooltip" data-tooltip="Delaying CPP past 65 increases your benefit ~8.4%/yr; taking it early reduces it. OAS can only be delayed, not taken early.">?</span>
+              </p>
+              <div class="columns is-mobile is-variable is-2">
+                <% if cpp %>
+                  <div class="column" id="what_if_benefit_<%= cpp.id %>">
+                    <div class="field">
+                      <label class="label is-small" for="benefits_<%= cpp.id %>_start_age">
+                        CPP
+                      </label>
+                      <div class="control">
+                        <div class="select is-fullwidth">
+                          <select name="benefits[<%= cpp.id %>][start_age]" id="benefits_<%= cpp.id %>_start_age">
+                            <% [60, 65, 70].each do |age| %>
+                              <option value="<%= age %>"
+                                <%= "selected" if (params.dig(:benefits, cpp.id.to_s, :start_age).presence&.to_i || cpp.start_age) == age %>>
+                                Age <%= age %><%= " (planned)" if age == cpp.start_age %>
+                              </option>
+                            <% end %>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                <% end %>
+                <% if oas %>
+                  <div class="column" id="what_if_benefit_<%= oas.id %>">
+                    <div class="field">
+                      <label class="label is-small" for="benefits_<%= oas.id %>_start_age">
+                        OAS
+                      </label>
+                      <div class="control">
+                        <div class="select is-fullwidth">
+                          <select name="benefits[<%= oas.id %>][start_age]" id="benefits_<%= oas.id %>_start_age">
+                            <% [65, 70].each do |age| %>
+                              <option value="<%= age %>"
+                                <%= "selected" if (params.dig(:benefits, oas.id.to_s, :start_age).presence&.to_i || oas.start_age) == age %>>
+                                Age <%= age %><%= " (planned)" if age == oas.start_age %>
+                              </option>
+                            <% end %>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            <% end %>
+
+            <%# DB Pensions — single start age fanned out to all of this user's pensions %>
+            <% user_pensions = user.pensions %>
+            <% if user_pensions.any? %>
+              <p class="heading has-text-grey mt-4 mb-2">
+                DB Pension<%= 's' if user_pensions.size > 1 %>
+                <span class="info-tooltip" data-tooltip="One start age is applied to all your DB pensions. Changing it adjusts payments using each pension's actuarial rates.">?</span>
+              </p>
+              <div class="field" id="what_if_pension_start_age_<%= user.id %>">
+                <label class="label is-small" for="users_<%= user.id %>_pension_start_age">Starts at</label>
+                <div class="control">
+                  <div class="select is-fullwidth">
+                    <select name="users[<%= user.id %>][pension_start_age]"
+                            id="users_<%= user.id %>_pension_start_age">
+                      <% selected_age = params.dig(:users, user.id.to_s, :pension_start_age).presence&.to_i ||
+                                        user_pensions.first.start_age %>
+                      <% (55..75).each do |age| %>
+                        <option value="<%= age %>"
+                          <%= "selected" if selected_age == age %>>
+                          Age <%= age %><%= " (planned)" if user_pensions.all? { |p| p.start_age == age } %>
+                        </option>
+                      <% end %>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+
+            <%# Post-retirement employment %>
+            <% if emp %>
+              <p class="heading has-text-grey mt-4 mb-2">
+                Post-Retirement Employment
+                <span class="info-tooltip" data-tooltip="Adjust how long you work after retirement. Income is kept from your plan.">?</span>
+              </p>
+              <div class="field" id="what_if_employment_<%= emp.id %>_end_age">
+                <label class="label is-small" for="employments_<%= emp.id %>_end_age">Work Until Age</label>
+                <div class="control">
+                  <div class="select is-fullwidth">
+                    <select name="employments[<%= emp.id %>][end_age]" id="employments_<%= emp.id %>_end_age">
+                      <% (emp.start_age..85).each do |age| %>
+                        <option value="<%= age %>"
+                          <%= "selected" if (params.dig(:employments, emp.id.to_s, :end_age).presence&.to_i || emp.end_age) == age %>>
+                          Age <%= age %><%= " (planned)" if age == emp.end_age %>
+                        </option>
+                      <% end %>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+
+          </div>
+        <% end %>
+
+        <div class="field">
+          <%= link_to "Reset", what_if_path, class: "button is-light is-fullwidth", data: { turbo_frame: "_top" } %>
+        </div>
+
+      <% end %>
+    </div>
+
+    <%# Results — only this frame refreshes when levers change %>
+    <%= turbo_frame_tag "what_if_results", class: "column" do %>
+
+
+      <%# Age conflict warnings — shown instead of simulation when ages are invalid %>
+      <% if @warnings.any? %>
+        <div class="notification is-warning is-light" id="what_if_age_warnings">
+          <p class="mb-2"><strong>Invalid age selection</strong></p>
+          <ul>
+            <% @warnings.each do |warning| %>
+              <li><%= warning %></li>
+            <% end %>
+          </ul>
+          <p class="mt-2 has-text-grey">Adjust the ages so income sources begin after retirement. The chart below shows your current plan.</p>
+        </div>
+      <% end %>
+
+      <%# Summary stat cards %>
+      <div class="columns mb-4" id="what_if_summary_cards">
+        <div class="column">
+          <div class="box has-text-centered" id="what_if_peak_net_worth_card">
+            <p class="heading">Peak Net Worth</p>
+            <p class="title is-4"><%= number_to_currency(@summary_stats[:what_if_peak_net_worth], precision: 0) %></p>
+            <% delta = @summary_stats[:peak_net_worth_delta] %>
+            <% if delta.nonzero? %>
+              <p class="subtitle is-6 <%= delta.positive? ? 'has-text-success' : 'has-text-danger' %>">
+                <%= delta.positive? ? '↑' : '↓' %> <%= number_to_currency(delta.abs, precision: 0) %> vs your plan
+              </p>
+            <% else %>
+              <p class="subtitle is-6 has-text-grey">same as your plan</p>
+            <% end %>
+          </div>
+        </div>
+
+        <div class="column">
+          <div class="box has-text-centered" id="what_if_avg_income_card">
+            <p class="heading">Avg. Annual Retirement Income</p>
+            <% if @summary_stats[:what_if_avg_income].positive? %>
+              <p class="title is-4"><%= number_to_currency(@summary_stats[:what_if_avg_income], precision: 0) %></p>
+              <% delta = @summary_stats[:avg_income_delta] %>
+              <% if delta.nonzero? %>
+                <p class="subtitle is-6 <%= delta.positive? ? 'has-text-success' : 'has-text-danger' %>">
+                  <%= delta.positive? ? '↑' : '↓' %> <%= number_to_currency(delta.abs, precision: 0) %> vs your plan
+                </p>
+              <% end %>
+              <p class="subtitle is-6 has-text-grey">today's $</p>
+            <% else %>
+              <p class="title is-4 has-text-grey">—</p>
+              <p class="subtitle is-6 has-text-grey">no retirement income projected</p>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <%# Insights — explain why values changed %>
+      <% if @insights.any? %>
+        <div class="box mb-4" id="what_if_insights">
+          <p class="heading mb-3">
+            What's driving this?
+            <span class="info-tooltip" data-tooltip="These explanations highlight the key factors behind changes in your projection, particularly when the direction may be counterintuitive.">?</span>
+          </p>
+          <% @insights.each do |insight| %>
+            <% notification_class = { success: 'is-success', danger: 'is-danger', warning: 'is-warning', info: 'is-info' }[insight.type] || 'is-info' %>
+            <div class="notification <%= notification_class %> is-light py-3 mb-2" id="what_if_insight_<%= insight.object_id %>">
+              <%= insight.text %>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+
+      <%# Net Worth chart %>
+      <div class="box mb-4"
+           id="what_if_net_worth_chart"
+           data-controller="simulation-chart"
+           data-simulation-chart-chart-data-value="<%= @net_worth_chart_data.to_json %>"
+           data-simulation-chart-title-value="Net Worth"
+           data-simulation-chart-users-value="<%= @users_for_chart.to_json %>">
+        <p class="title is-5 mb-3">
+          Net Worth
+          <span class="info-tooltip" data-tooltip="Total projected account balances over time. Grey dashed = your current plan; green = what-if scenario.">?</span>
+        </p>
+        <div data-simulation-chart-target="chartContainer"></div>
+      </div>
+
+      <%# Retirement Income chart %>
+      <div class="box mb-5"
+           id="what_if_income_chart"
+           data-controller="simulation-chart"
+           data-simulation-chart-chart-data-value="<%= @income_chart_data.to_json %>"
+           data-simulation-chart-title-value="Income"
+           data-simulation-chart-users-value="<%= @users_for_chart.to_json %>">
+        <div class="level mb-2">
+          <div class="level-left">
+            <p class="title is-5">
+              Retirement Income
+              <span class="info-tooltip" data-tooltip="Projected annual income in retirement. Grey dashed = your current plan; green = what-if scenario.">?</span>
+            </p>
+          </div>
+          <div class="level-right">
+            <div class="buttons has-addons mb-0" id="what_if_income_toggle">
+              <button class="button is-small is-selected is-primary"
+                      data-simulation-chart-target="nominalBtn"
+                      data-action="simulation-chart#toggleDollars"
+                      data-simulation-chart-mode-param="nominal"
+                      type="button">Future $</button>
+              <button class="button is-small"
+                      data-simulation-chart-target="realBtn"
+                      data-action="simulation-chart#toggleDollars"
+                      data-simulation-chart-mode-param="real"
+                      type="button">Today's $</button>
+            </div>
+          </div>
+        </div>
+        <div data-simulation-chart-target="chartContainer"></div>
+      </div>
+
+    <% end %>
+
+  </div>
+</div>

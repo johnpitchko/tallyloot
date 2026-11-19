@@ -1,0 +1,43 @@
+
+<% _year = Time.zone.now.year %>
+<% _inflation_rate = @household.portfolio&.inflation_rate || 0.02 %>
+<% _federal = Tax::FederalBrackets.new(year: _year, inflation_rate: _inflation_rate) %>
+<% _provincial = Tax::ProvincialBrackets.new(year: _year, inflation_rate: _inflation_rate, province: nil) %>
+
+<div data-controller="net-income-preview"
+     data-net-income-preview-federal-brackets-value="<%= _federal.brackets.to_json %>"
+     data-net-income-preview-federal-bpa-value="<%= _federal.basic_personal_amount %>"
+     data-net-income-preview-province-data-value="<%= _provincial.all_province_data.to_json %>">
+
+  <div class="columns">
+    <div class="column is-half">
+      <div class="field">
+        <label class="label" for="household_province">Province of Residence</label>
+        <div class="control">
+          <div class="select is-fullwidth">
+            <%= form.select :province,
+                Household::PROVINCES.map { |p| [p, p] },
+                { include_blank: "Select province..." },
+                { class: "input", id: "household_province",
+                  data: { net_income_preview_target: "provinceSelect",
+                          action: "change->net-income-preview#update" } } %>
+          </div>
+        </div>
+        <p class="help">Used to estimate provincial income tax on your retirement income.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="columns">
+    <div class="column is-half">
+      <%= bulma_currency_field form, :retirement_income_goal,
+          show_label: true,
+          placeholder: "e.g., 80,000",
+          data: { action: "input->net-income-preview#update",
+                  net_income_preview_target: "grossInput" } %>
+      <p class="help">Enter in today's dollars — we'll automatically adjust for inflation each year. Used to calculate how much to withdraw from your accounts each year.</p>
+      <p class="help is-info" data-net-income-preview-target="preview"></p>
+    </div>
+  </div>
+
+</div>

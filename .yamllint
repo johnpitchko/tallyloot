@@ -1,0 +1,15 @@
+extends: default
+
+rules:
+  document-start: disable   # Don't require '---' at top
+
+  empty-lines:
+    max: 3                 # Allow blank lines freely within file
+    max-start: 0            # No blank line at start
+    max-end: 1              # Allow up to 1 blank line at end
+
+  indentation:
+    spaces: 2               # Rails and YAML convention
+
+  line-length:
+    max: 120                # Optional relaxed line length

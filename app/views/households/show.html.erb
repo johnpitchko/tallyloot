@@ -1,0 +1,136 @@
+<%= render "shared/settings_tabs" %>
+
+<section class="section">
+  <h1 class="title is-3">Household Settings</h1>
+  <p class="subtitle is-6">Manage the people in your household</p>
+
+  <!-- Household Name Section -->
+  <%= form_for @household, url: household_path do |form| %>
+    <div class="box mb-5" id="household_<%= @household.id %>">
+      <h2 class="title is-5">Household Details</h2>
+      <%= render "households/fields", form: form %>
+
+      <div class="field mt-4">
+        <div class="control">
+          <%= form.submit "Save", class: "button is-primary is-small" %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Members Section - One form per user -->
+  <% @household.users.order(:created_at).each do |user| %>
+    <%= form_for user, url: user_path(user, source: 'household'), method: :patch, data: { controller: "year-calculator" } do |form| %>
+      <div class="box mb-5" id="user_<%= user.id %>">
+        <div class="member-card">
+          <div class="member-card-header">
+            <h3 class="title is-6 mb-0">
+              <% if user.name.present? %>
+                <%= user.name %>
+              <% else %>
+                New Member
+              <% end %>
+            </h3>
+          </div>
+
+          <div class="member-card-body">
+            <!-- Row 1: Name fields -->
+            <div class="columns is-mobile">
+              <div class="column">
+                <%= bulma_field form, :name, show_label: true, placeholder: "Name" %>
+              </div>
+            </div>
+
+            <!-- Row 2: Birth Date -->
+            <div class="columns is-mobile">
+              <div class="column is-narrow" style="min-width: 220px;">
+                <%= bulma_field_with_addon form, :birth_date,
+                    type: :date_field,
+                    addon_target: "currentAge",
+                    data: { year_calculator_target: "birthDate", action: "change->year-calculator#calculate" } %>
+              </div>
+            </div>
+
+            <!-- Row 3: Retirement Age and Life Expectancy with calculated years -->
+            <div class="columns is-mobile">
+              <div class="column is-narrow" style="min-width: 200px;">
+                <%= bulma_field_with_addon form, :retirement_age,
+                    type: :number_field,
+                    addon_target: "retirementYear",
+                    step: 1, min: 18, max: 120,
+                    data: { year_calculator_target: "retirementAge", action: "input->year-calculator#calculate" } %>
+              </div>
+              <div class="column is-narrow" style="min-width: 200px;">
+                <%= bulma_field_with_addon form, :life_expectancy,
+                    type: :number_field,
+                    addon_target: "lifeExpectancyYear",
+                    step: 1, min: 0, max: 120,
+                    data: { year_calculator_target: "lifeExpectancy", action: "input->year-calculator#calculate" } %>
+              </div>
+              <div class="column"></div>
+            </div>
+
+            <div class="field mt-3">
+              <div class="control is-flex is-justify-content-flex-end">
+                <%= form.submit "Save", class: "button is-primary is-small" %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+
+  <% unless @spouse.persisted? %>
+    <div class="box mb-5" data-controller="toggle year-calculator" id="add_spouse">
+      <h2 class="title is-5">Spouse or Partner</h2>
+      <div class="field">
+        <label class="checkbox">
+          <%= check_box_tag :add_spouse, '1', false, data: { action: "change->toggle#toggle" } %>
+          Add a spouse or partner to your household
+        </label>
+      </div>
+
+      <div data-toggle-target="content" class="is-hidden mt-4">
+        <%= form_for @spouse, url: users_path do |form| %>
+          <div class="columns is-mobile">
+            <div class="column">
+              <%= bulma_field form, :name, show_label: true, placeholder: "Name" %>
+            </div>
+          </div>
+
+          <div class="columns is-mobile">
+            <div class="column is-narrow" style="min-width: 220px;">
+              <%= bulma_field_with_addon form, :birth_date,
+                  type: :date_field,
+                  addon_target: "currentAge",
+                  data: { year_calculator_target: "birthDate", action: "change->year-calculator#calculate" } %>
+            </div>
+            <div class="column is-narrow" style="min-width: 200px;">
+              <%= bulma_field_with_addon form, :retirement_age,
+                  type: :number_field,
+                  addon_target: "retirementYear",
+                  value: 65,
+                  step: 1, min: 18, max: 120,
+                  data: { year_calculator_target: "retirementAge", action: "input->year-calculator#calculate" } %>
+            </div>
+            <div class="column is-narrow" style="min-width: 200px;">
+              <%= bulma_field_with_addon form, :life_expectancy,
+                  type: :number_field,
+                  addon_target: "lifeExpectancyYear",
+                  value: 82,
+                  step: 1, min: 0, max: 120,
+                  data: { year_calculator_target: "lifeExpectancy", action: "input->year-calculator#calculate" } %>
+            </div>
+          </div>
+
+          <div class="field mt-3">
+            <div class="control">
+              <%= form.submit "Add Spouse", class: "button is-primary is-small" %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</section>

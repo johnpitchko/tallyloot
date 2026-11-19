@@ -1,0 +1,23 @@
+<%= form_with model: [@user, @employment] do |form| %>
+
+  <% if @employment.errors.any? %>
+    <div class="notification is-danger is-light" id="employment_errors">
+      <ul>
+        <% @employment.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= render "employments/fields", form: form %>
+
+  <div class="field is-grouped mt-4">
+    <div class="control">
+      <%= form.submit "Update Employment", class: "button is-primary" %>
+    </div>
+    <div class="control">
+      <%= link_to "Cancel", root_path, class: "button is-light" %>
+    </div>
+  </div>
+<% end %>

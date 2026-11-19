@@ -1,0 +1,218 @@
+<% content_for :container_class, "is-fluid" %>
+
+<div id="dashboard">
+  <% if @household.sample_data? %>
+    <div class="notification is-info is-light" id="sample_data_notice">
+      <%= button_to "", sample_notice_path, method: :delete, class: "delete", form_class: "is-inline",
+            aria: { label: "Dismiss" } %>
+      <strong>These are sample numbers.</strong>
+      Replace them with your own on the left — the results update each time you save.
+    </div>
+  <% end %>
+
+  <div class="columns is-desktop">
+    <div class="column is-5-desktop is-4-widescreen">
+      <%= render "inputs", household: @household %>
+    </div>
+
+    <div class="column" id="workspace_results">
+      <section class="mb-5" id="summary_headline">
+        <p class="has-text-grey is-italic">
+          Household net worth when <%= @household.users.size > 1 ? "the first of you retires" : "you retire" %>,
+          <%= @summary[:retirement_year] %>
+        </p>
+        <p class="title is-1 mb-1" id="summary_retirement_net_worth">
+          <%= number_to_currency(@summary[:retirement_net_worth], precision: 0) %>
+        </p>
+        <p class="has-text-grey is-size-7">Future dollars</p>
+      </section>
+
+      <div class="columns is-multiline is-mobile dashboard-summary mb-5">
+        <div class="column is-half-mobile">
+          <div class="box summary-card" id="summary_current_net_worth">
+            <p class="heading">Net Worth Today</p>
+            <p class="title is-4"><%= number_to_currency(@summary[:current_net_worth], precision: 0) %></p>
+          </div>
+        </div>
+        <div class="column is-half-mobile">
+          <div class="box summary-card" id="summary_years_to_retirement">
+            <p class="heading">Years to Retirement</p>
+            <% if @summary[:years_to_retirement] && @summary[:years_to_retirement] > 0 %>
+              <p class="title is-4"><%= @summary[:years_to_retirement] %></p>
+            <% else %>
+              <p class="title is-4">Retired</p>
+            <% end %>
+          </div>
+        </div>
+        <div class="column is-half-mobile">
+          <div class="box summary-card" id="summary_retirement_income">
+            <p class="heading">Avg. Retirement Income</p>
+            <% if @summary[:avg_retirement_income].positive? %>
+              <p class="title is-4"><%= number_to_currency(@summary[:avg_retirement_income], precision: 0) %></p>
+            <% else %>
+              <p class="title is-4 has-text-grey">—</p>
+            <% end %>
+            <p class="is-size-7 has-text-grey">per year, today's $</p>
+          </div>
+        </div>
+        <div class="column is-half-mobile">
+          <div class="box summary-card" id="summary_income_goal">
+            <p class="heading">Income Goal</p>
+            <% if @household.retirement_income_goal.to_i.positive? %>
+              <p class="title is-4"><%= number_to_currency(@household.retirement_income_goal, precision: 0) %></p>
+            <% else %>
+              <p class="title is-4 has-text-grey">—</p>
+            <% end %>
+            <p class="is-size-7 has-text-grey">per year, today's $</p>
+          </div>
+        </div>
+      </div>
+
+      <section class="mb-5">
+        <div
+          class="box"
+          id="net_worth_projection"
+          data-controller="chart"
+          data-chart-labels-value="<%= @periods.map(&:year).to_json %>"
+          data-chart-account-data-value="<%= @account_data.to_json %>"
+          data-chart-users-value="<%= @users_for_filter.to_json %>"
+        >
+          <div class="level">
+            <div class="level-left">
+              <h2 class="title is-4">Net Worth Projection</h2>
+            </div>
+            <div class="level-right">
+              <div class="level-item">
+                <div class="select is-small" id="net_worth_user_filter">
+                  <select data-chart-target="userFilter" data-action="change->chart#filter">
+                    <option value="all">Entire Household</option>
+                    <% @users_for_filter.each do |user| %>
+                      <option value="<%= user[:id] %>"><%= user[:name] %></option>
+                    <% end %>
+                  </select>
+                </div>
+              </div>
+              <div class="level-item">
+                <%= link_to "Details", details_projection_path, class: "button is-small is-link is-outlined" %>
+              </div>
+            </div>
+          </div>
+          <div data-chart-target="chartContainer"></div>
+        </div>
+      </section>
+
+      <section class="mb-5">
+        <div
+          class="box"
+          id="income_projection"
+          data-controller="income-chart"
+          data-income-chart-labels-value="<%= @income_periods.map(&:year).to_json %>"
+          data-income-chart-income-data-value="<%= @income_data.to_json %>"
+          data-income-chart-real-income-data-value="<%= @real_income_data.to_json %>"
+          data-income-chart-users-value="<%= @users_for_filter.to_json %>"
+        >
+          <div class="level">
+            <div class="level-left">
+              <div>
+                <h2 class="title is-4">Income Projection</h2>
+                <p class="subtitle is-6">Account withdrawals, pensions, and government benefits</p>
+              </div>
+            </div>
+            <div class="level-right">
+              <div class="level-item">
+                <div class="buttons has-addons mb-0" id="income_gross_net_toggle">
+                  <button
+                    class="button is-small is-selected is-primary"
+                    data-income-chart-target="grossBtn"
+                    data-action="income-chart#toggleIncomeView"
+                    data-income-chart-view-param="gross"
+                    type="button"
+                  >Gross</button>
+                  <button
+                    class="button is-small"
+                    data-income-chart-target="netBtn"
+                    data-action="income-chart#toggleIncomeView"
+                    data-income-chart-view-param="net"
+                    type="button"
+                  >Net</button>
+                </div>
+              </div>
+              <div class="level-item">
+                <div class="buttons has-addons mb-0" id="income_dollars_toggle">
+                  <button
+                    class="button is-small is-selected is-primary"
+                    data-income-chart-target="nominalBtn"
+                    data-action="income-chart#toggleDollars"
+                    data-income-chart-mode-param="nominal"
+                    type="button"
+                  >Future $</button>
+                  <button
+                    class="button is-small"
+                    data-income-chart-target="realBtn"
+                    data-action="income-chart#toggleDollars"
+                    data-income-chart-mode-param="real"
+                    type="button"
+                  >Today's $</button>
+                </div>
+              </div>
+              <div class="level-item">
+                <div class="select is-small" id="income_user_filter">
+                  <select data-income-chart-target="userFilter" data-action="change->income-chart#filter">
+                    <option value="all">Entire Household</option>
+                    <% @users_for_filter.each do |user| %>
+                      <option value="<%= user[:id] %>"><%= user[:name] %></option>
+                    <% end %>
+                  </select>
+                </div>
+              </div>
+              <div class="level-item">
+                <%= link_to "Details", details_projection_path(tab: 'income'), class: "button is-small is-link is-outlined" %>
+              </div>
+            </div>
+          </div>
+          <div data-income-chart-target="summaryChartContainer"></div>
+          <div class="mt-4">
+            <p class="heading has-text-grey-light mb-2">Income Breakdown</p>
+            <div data-income-chart-target="breakdownChartContainer"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="mb-5" id="crossover_point_section">
+        <div class="box" id="crossover_chart"
+          data-controller="crossover-chart"
+          data-crossover-chart-crossover-data-value="<%= @crossover_data.to_json %>"
+          data-crossover-chart-users-value="<%= @users_for_filter.to_json %>">
+
+          <div class="level mb-2">
+            <div class="level-left">
+              <div>
+                <h2 class="title is-5 mb-1">
+                  Crossover Point
+                  <span class="info-tooltip" data-tooltip="Annual investment growth vs. contributions. The crossover point is the year when compounding overtakes new contributions — after that, your portfolio could reach your retirement goal without any further saving.">?</span>
+                </h2>
+                <p class="subtitle is-6" data-crossover-chart-target="subtitle"></p>
+              </div>
+            </div>
+            <div class="level-right">
+              <div class="level-item">
+                <div class="select is-small">
+                  <select id="crossover_user_filter"
+                          data-crossover-chart-target="userFilter"
+                          data-action="change->crossover-chart#updateChart">
+                    <option value="all">Household</option>
+                    <% @users_for_filter.each do |user| %>
+                      <option value="<%= user[:id] %>"><%= user[:name] %></option>
+                    <% end %>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="crossover_chart_container" data-crossover-chart-target="chartContainer"></div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>

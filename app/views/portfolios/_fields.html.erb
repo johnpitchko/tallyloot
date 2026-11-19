@@ -1,0 +1,92 @@
+<div class="columns">
+  <div class="column is-one-quarter">
+    <div class="field">
+      <%= form.label :inflation_rate, class: "label" do %>
+        Inflation rate
+        <span
+          class="info-tooltip"
+          data-tooltip="Expected annual inflation rate. Used to convert between nominal (future) and real (today's) dollars. Historically averages 2-3%."
+        >?</span>
+      <% end %>
+      <div class="field has-addons">
+        <div class="control">
+          <%= form.number_field :inflation_rate, value: form.object.inflation_rate && form.object.inflation_rate * 100, class: "input", step: 0.1, min: 0.1, max: 100, placeholder: "e.g., 2" %>
+        </div>
+        <div class="control">
+          <span class="button is-static">%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% glidepath_tooltip =
+  "How your investment mix shifts from stocks to bonds as you age.\n\n" +
+    Glidepath.all.map { |g| "#{g.name}: #{g.description}" }.join("\n\n") %>
+
+<div class="columns">
+  <div class="column is-half"
+       data-controller="glidepath"
+       data-glidepath-base-path-value="/glidepaths">
+    <div class="field">
+      <%= form.label :glidepath_id, class: "label" do %>
+        Investment Glidepath
+        <span class="info-tooltip" data-tooltip="<%= glidepath_tooltip %>">?</span>
+      <% end %>
+      <div class="control">
+        <div class="select is-fullwidth">
+          <%= form.collection_select :glidepath_id, Glidepath.all, :id, :name, {},
+                { data: { action: "change->glidepath#change" } } %>
+        </div>
+      </div>
+    </div>
+
+    <%= turbo_frame_tag "glidepath_details",
+          src: glidepath_path(form.object.glidepath_id),
+          data: { glidepath_target: "frame" } %>
+  </div>
+</div>
+
+<div class="columns">
+  <div class="column is-half">
+    <div class="field" id="spending_smile_field">
+      <%= form.label :spending_smile_enabled, class: "label" do %>
+        Retirement Spending Smile
+        <span
+          class="info-tooltip"
+          data-tooltip="Models realistic spending changes through retirement. Research shows spending gradually declines to about 70% of your goal by age 80, then slowly rises to around 78% by end of life as health care costs increase.&#10;&#10;The curve is anchored to your retirement age and life expectancy, so it adjusts automatically as your profile changes."
+        >?</span>
+      <% end %>
+      <div class="control">
+        <%= form.label :spending_smile_enabled, class: "checkbox" do %>
+          <%= form.check_box :spending_smile_enabled %>
+          Reduce withdrawal goals across retirement phases
+        <% end %>
+      </div>
+    </div>
+
+    <% eldest = @household.eldest_user %>
+    <% if eldest&.retirement_age && eldest&.life_expectancy %>
+      <% smile = SpendingSmile.new(retirement_age: eldest.retirement_age, terminal_age: eldest.life_expectancy) %>
+      <% ages = (eldest.retirement_age..eldest.life_expectancy).step(5).to_a %>
+      <% ages |= [SpendingSmile::TROUGH_AGE, eldest.life_expectancy] %>
+      <% ages.sort! %>
+      <table class="table is-narrow is-striped is-fullwidth mt-3" id="spending_smile_table">
+        <thead>
+          <tr>
+            <th>Age</th>
+            <th>% of Income Goal</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% ages.each do |age| %>
+            <tr id="spending_smile_age_<%= age %>">
+              <td><%= age %></td>
+              <td><%= number_to_percentage(smile.multiplier_for_age(age) * 100, precision: 1) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% end %>
+  </div>
+</div>

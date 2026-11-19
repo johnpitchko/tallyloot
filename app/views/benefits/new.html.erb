@@ -1,0 +1,7 @@
+<%= turbo_frame_tag 'benefit_form' do %>
+  <div class="box mt-3 p-4 workspace-form" id="new_benefit">
+    <h2 class="title is-6 mb-1">Add Benefit</h2>
+    <p class="subtitle is-7 mb-3"><%= @user.name %></p>
+    <%= render "form" %>
+  </div>
+<% end %>

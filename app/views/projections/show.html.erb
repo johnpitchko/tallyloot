@@ -1,0 +1,121 @@
+<div class="container">
+  <div class="level">
+    <div class="level-left">
+      <div class="level-item">
+        <h1 class="title is-1">Detailed Projection</h1>
+      </div>
+    </div>
+    <div class="level-right">
+      <div class="level-item">
+        <%= link_to "Back to Dashboard", root_path, class: "button" %>
+      </div>
+    </div>
+  </div>
+
+  <div class="box">
+    <div class="table-container">
+      <table class="table is-striped is-hoverable is-fullwidth">
+        <thead>
+          <tr>
+            <th rowspan="2">Year</th>
+            <th rowspan="2">Age(s)</th>
+            <% account_count = @household.accounts.count %>
+            <% if account_count > 0 %>
+              <th class="has-text-centered" colspan="<%= account_count %>" style="border-left: 1px solid #353a46;">Accounts</th>
+            <% end %>
+            <% benefit_count = @household.benefits.count %>
+            <% if benefit_count > 0 %>
+              <th class="has-text-centered" colspan="<%= benefit_count %>" style="border-left: 1px solid #353a46;">Benefits</th>
+            <% end %>
+            <% pension_count = @household.pensions.count %>
+            <% if pension_count > 0 %>
+              <th class="has-text-centered" colspan="<%= pension_count %>" style="border-left: 1px solid #353a46;">Pensions</th>
+            <% end %>
+            <% employment_count = @household.employments.where.not(annual_income: 0).count %>
+            <% if employment_count > 0 %>
+              <th class="has-text-centered" colspan="<%= employment_count %>" style="border-left: 1px solid #353a46;">Employment</th>
+            <% end %>
+            <th rowspan="2" class="has-text-right" style="border-left: 1px solid #353a46;">Total Income</th>
+            <% if @household.retirement_income_goal.present? && @household.retirement_income_goal > 0 %>
+              <th rowspan="2" class="has-text-right">Goal</th>
+              <th rowspan="2" class="has-text-right">Shortfall</th>
+            <% end %>
+          </tr>
+          <tr>
+            <% @household.users.each_with_index do |user, user_idx| %>
+              <% user.accounts.each_with_index do |account, account_idx| %>
+                <th class="has-text-right" style="<%= column_group_border_style(user_idx, account_idx) %>"><%= account.name %></th>
+              <% end %>
+            <% end %>
+            <% @household.users.each_with_index do |user, user_idx| %>
+              <% user.benefits.each_with_index do |benefit, benefit_idx| %>
+                <th class="has-text-right" style="<%= column_group_border_style(user_idx, benefit_idx) %>"><%= benefit.name %></th>
+              <% end %>
+            <% end %>
+            <% @household.users.each_with_index do |user, user_idx| %>
+              <% user.pensions.each_with_index do |pension, pension_idx| %>
+                <th class="has-text-right" style="<%= column_group_border_style(user_idx, pension_idx) %>"><%= pension.name %></th>
+              <% end %>
+            <% end %>
+            <% if employment_count > 0 %>
+              <% @household.users.each_with_index do |user, user_idx| %>
+                <% next unless user.employment&.annual_income.to_i > 0 %>
+                <th class="has-text-right" style="<%= column_group_border_style(user_idx, 0) %>">
+                  <%= user.employment.label.presence || "Post-retirement employment" %> (<%= user.name %>)
+                </th>
+              <% end %>
+            <% end %>
+          </tr>
+        </thead>
+        <tbody>
+          <% @periods.each do |period| %>
+            <tr>
+              <td><%= period.year %></td>
+              <td><%= period.household_ages %></td>
+              <% @household.users.each_with_index do |user, user_idx| %>
+                <% user.accounts.each_with_index do |account, account_idx| %>
+                  <% account_period = period.account_periods.find { |ap| ap.account_id == account.id } %>
+                  <td class="has-text-right" style="<%= column_group_border_style(user_idx, account_idx) %>">
+                    <%= number_to_currency(account_period&.withdrawal_amount || 0) %>
+                  </td>
+                <% end %>
+              <% end %>
+              <% @household.users.each_with_index do |user, user_idx| %>
+                <% user.benefits.each_with_index do |benefit, benefit_idx| %>
+                  <% benefit_period = period.benefit_periods.find { |bp| bp.benefit_id == benefit.id } %>
+                  <td class="has-text-right" style="<%= column_group_border_style(user_idx, benefit_idx) %>">
+                    <%= number_to_currency(benefit_period&.income_amount || 0) %>
+                  </td>
+                <% end %>
+              <% end %>
+              <% @household.users.each_with_index do |user, user_idx| %>
+                <% user.pensions.each_with_index do |pension, pension_idx| %>
+                  <% pension_period = period.pension_periods.find { |pp| pp.pension_id == pension.id } %>
+                  <td class="has-text-right" style="<%= column_group_border_style(user_idx, pension_idx) %>">
+                    <%= number_to_currency(pension_period&.income_amount || 0) %>
+                  </td>
+                <% end %>
+              <% end %>
+              <% if employment_count > 0 %>
+                <% @household.users.each_with_index do |user, user_idx| %>
+                  <% next unless user.employment&.annual_income.to_i > 0 %>
+                  <% employment_period = period.employment_periods.find { |ep| ep.employment_id == user.employment.id } %>
+                  <td class="has-text-right" style="<%= column_group_border_style(user_idx, 0) %>">
+                    <%= number_to_currency(employment_period&.income_amount || 0) %>
+                  </td>
+                <% end %>
+              <% end %>
+              <td class="has-text-right" style="border-left: 1px solid #353a46;"><%= number_to_currency(period.income_amount) %></td>
+              <% if @household.retirement_income_goal.present? && @household.retirement_income_goal > 0 %>
+                <td class="has-text-right"><%= period.retired? ? number_to_currency(period.nominal_income_goal, precision: 0) : '-' %></td>
+                <td class="has-text-right <%= 'has-text-danger' if period.income_shortfall > 0 %>">
+                  <%= period.income_shortfall > 0 ? number_to_currency(period.income_shortfall) : '-' %>
+                </td>
+              <% end %>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

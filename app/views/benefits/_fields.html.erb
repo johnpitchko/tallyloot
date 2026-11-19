@@ -1,0 +1,63 @@
+<div class="columns">
+  <div class="column is-half">
+    <div class="field">
+      <label class="label">Name</label>
+      <div class="control">
+        <%= form.text_field :name, class: "input", placeholder: "Benefit name" %>
+      </div>
+    </div>
+  </div>
+  <div class="column is-half">
+    <% government_benefit = benefit.type.in?(%w[Benefit::Cpp Benefit::Oas]) %>
+    <% if government_benefit %>
+      <div data-controller="benefit-estimator"
+           data-benefit-estimator-type-value="<%= benefit.type == 'Benefit::Cpp' ? 'cpp' : 'oas' %>">
+    <% end %>
+    <div class="field">
+      <label class="label">Annual Amount</label>
+      <div class="field has-addons">
+        <div class="control">
+          <span class="button is-static">$</span>
+        </div>
+        <div class="control is-expanded">
+          <%= form.text_field :annual_amount, class: "input", inputmode: "numeric", placeholder: "0",
+              data: { controller: "currency-input", action: "focus->currency-input#focus blur->currency-input#blur",
+                      **(government_benefit ? { benefit_estimator_target: "annualAmount" } : {}) } %>
+        </div>
+      </div>
+      <% if government_benefit %>
+        <p class="help">Enter your estimated amount at the standard age of 65.</p>
+      <% end %>
+    </div>
+    <% if government_benefit %>
+      <%= render 'benefits/estimator', benefit: benefit %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="columns">
+  <div class="column is-half">
+    <div class="field">
+      <label class="label">Start Age</label>
+      <div class="control">
+        <%= form.number_field :start_age, class: "input", step: 1, placeholder: "65",
+            min: benefit.earliest_start_age, max: benefit.latest_start_age %>
+      </div>
+    </div>
+  </div>
+  <div class="column is-half">
+    <div class="field">
+      <label class="label">Inflation Indexed</label>
+      <div class="control">
+        <label class="checkbox">
+          <%= form.check_box :inflation_indexed, disabled: benefit.government_benefit? %>
+          Benefit amount adjusts for inflation
+        </label>
+      </div>
+      <% if benefit.government_benefit? %>
+        <p class="help">Government benefits are automatically inflation indexed</p>
+      <% end %>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,41 @@
+---
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+# == Schema Information
+#
+# Table name: pensions
+#
+#  id                    :integer          not null, primary key
+#  annual_amount         :decimal(10, 2)   default(0.0), not null
+#  description           :string
+#  early_reduction_rate  :decimal(5, 4)
+#  inflation_indexed     :boolean
+#  late_increase_rate    :decimal(5, 4)
+#  name                  :string
+#  normal_retirement_age :integer          default(65)
+#  start_age             :integer          not null
+#  created_at            :datetime         not null
+#  updated_at            :datetime         not null
+#  user_id               :integer          not null
+#
+# Indexes
+#
+#  index_pensions_on_user_id  (user_id)
+#
+# Foreign Keys
+#
+#  user_id  (user_id => users.id)
+#
+indexed:
+  name: Indexed pension
+  description: My indexed pension 1
+  inflation_indexed: true
+  start_age: 65
+  annual_amount: 7000
+  user: working_user_john
+non_indexed:
+  name: Non-indexed pension
+  description: My non-indexed pension 2
+  inflation_indexed: false
+  start_age: 70
+  annual_amount: 12_000
+  user: retired_user_bob

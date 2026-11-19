@@ -1,0 +1,14 @@
+<div class="tabs">
+  <ul>
+    <li class=<%= "is-active" if current_page?(household_path) %>>
+      <%= link_to household_path do %>
+        Household
+      <% end %>
+    </li>
+    <li class=<%= "is-active" if current_page?(portfolio_path) || controller_name == 'accounts' %>>
+      <%= link_to portfolio_path do %>
+        Portfolio
+      <% end %>
+    </li>
+  </ul>
+</div>

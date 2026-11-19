@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tallyloot - Open-Source Retirement Planning for Canadians</title>
+    <meta
+      name="description"
+      content="A free, open-source retirement planner for Canadian households. Run it on your own computer and project your RRSP, TFSA, pensions, CPP and OAS through retirement."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.tallyloot.com/" />
+    <meta property="og:title" content="Tallyloot - Open-Source Retirement Planning for Canadians" />
+    <meta property="og:description" content="A free, open-source retirement planner for Canadian households. Run it on your own computer and project your RRSP, TFSA, pensions, CPP and OAS through retirement." />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <!-- Navigation -->
+    <nav
+      id="navbar"
+      class="navbar is-dark"
+      role="navigation"
+      aria-label="main navigation"
+    >
+      <div class="container">
+        <div class="navbar-brand">
+          <a class="navbar-item" href="index.html">
+            <div class="logo">
+              <svg
+                class="logo-icon"
+                width="28"
+                height="28"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"
+                />
+              </svg>
+              <span>Tallyloot</span>
+            </div>
+          </a>
+          <a id="nav-github" class="navbar-item button is-primary-cta is-small ml-auto" href="https://github.com/johnpitchko/tallyloot">View on GitHub</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="hero" class="hero is-dark-theme is-fullheight-with-navbar">
+      <div class="hero-body">
+        <div class="container has-text-centered">
+          <h1 class="title is-1 is-spaced">Retirement Planning You Run Yourself</h1>
+          <p class="subtitle is-4">
+            Project your RRSP, TFSA, pensions, CPP and OAS through retirement.
+            Free and open source. It runs on your own computer, so your numbers
+            never leave it.
+          </p>
+          <div id="hero-buttons" class="buttons is-centered">
+            <a
+            id="hero-cta"
+            href="#get-started"
+            class="button is-primary-cta is-large"
+          >
+            Get Started
+          </a>
+          <a
+            id="hero-github"
+            href="https://github.com/johnpitchko/tallyloot"
+            class="button is-secondary-cta is-large"
+          >
+            View on GitHub
+          </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="section is-dark is-medium">
+      <div class="container">
+        <h2 class="title is-2 has-text-centered section-title">
+          Everything You Need to Plan with Confidence
+        </h2>
+        <p class="subtitle is-5 has-text-centered section-subtitle">
+          Tallyloot brings together all your retirement accounts and projections
+          on one page.
+        </p>
+
+        <div class="columns is-multiline">
+          <!-- Feature 1: Comprehensive Planning -->
+          <div class="column is-6-tablet is-3-desktop">
+            <div id="feature-comprehensive" class="feature-card">
+              <div class="icon-wrapper">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <rect x="3" y="3" width="7" height="7"></rect>
+                  <rect x="14" y="3" width="7" height="7"></rect>
+                  <rect x="14" y="14" width="7" height="7"></rect>
+                  <rect x="3" y="14" width="7" height="7"></rect>
+                </svg>
+              </div>
+              <h3 class="feature-title">Private by Design</h3>
+              <p class="feature-description">
+                Runs on your own computer or home server. No account, no sign-up,
+                and your data never leaves your machine.
+              </p>
+            </div>
+          </div>
+
+          <!-- Feature 2: Smart Projections -->
+          <div class="column is-6-tablet is-3-desktop">
+            <div id="feature-projections" class="feature-card">
+              <div class="icon-wrapper">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <line x1="12" y1="20" x2="12" y2="10"></line>
+                  <line x1="18" y1="20" x2="18" y2="4"></line>
+                  <line x1="6" y1="20" x2="6" y2="16"></line>
+                </svg>
+              </div>
+              <h3 class="feature-title">Smart Projections</h3>
+              <p class="feature-description">
+                See your net worth and income projections through retirement.
+                Understand your future at a glance.
+              </p>
+            </div>
+          </div>
+
+          <!-- Feature 3: Household Support -->
+          <div class="column is-6-tablet is-3-desktop">
+            <div id="feature-household" class="feature-card">
+              <div class="icon-wrapper">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+              </div>
+              <h3 class="feature-title">Household Support</h3>
+              <p class="feature-description">
+                Plan together as a couple or family. Coordinate your retirement
+                strategy for better outcomes.
+              </p>
+            </div>
+          </div>
+
+          <!-- Feature 4: Canadian-Focused -->
+          <div class="column is-6-tablet is-3-desktop">
+            <div id="feature-canadian" class="feature-card">
+              <div class="icon-wrapper">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M12 2L9 9l-7 1 5 5-1 7 6-3 6 3-1-7 5-5-7-1z" />
+                </svg>
+              </div>
+              <h3 class="feature-title">Canadian-Focused</h3>
+              <p class="feature-description">
+                Built specifically for Canadian retirement accounts, tax rules,
+                and government programs like CPP and OAS.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="section is-dark-elevated is-medium">
+      <div class="container">
+        <h2 class="title is-2 has-text-centered section-title">How It Works</h2>
+        <p class="subtitle is-5 has-text-centered section-subtitle">
+          Up and running in a few minutes with Docker.
+        </p>
+
+        <div class="columns">
+          <!-- Step 1 -->
+          <div class="column">
+            <div id="step-1" class="step-item">
+              <div class="step-number">1</div>
+              <h3 class="step-title">Run It</h3>
+              <p class="step-description">
+                Start Tallyloot with Docker on your computer or home server.
+              </p>
+            </div>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="column">
+            <div id="step-2" class="step-item">
+              <div class="step-number">2</div>
+              <h3 class="step-title">Add Your Numbers</h3>
+              <p class="step-description">
+                Replace the sample household with your accounts, pensions, and
+                retirement goals.
+              </p>
+            </div>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="column">
+            <div id="step-3" class="step-item">
+              <div class="step-number">3</div>
+              <h3 class="step-title">View Your Future</h3>
+              <p class="step-description">
+                See projections of your net worth and income throughout
+                retirement.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Get Started Section -->
+    <section id="get-started" class="section is-dark is-medium">
+      <div class="container">
+        <div class="cta-section has-text-centered">
+          <h2 class="title is-2">Get Started</h2>
+          <p class="subtitle is-5">
+            With <a id="get-started-docker" href="https://docs.docker.com/get-docker/">Docker</a>
+            installed, run:
+          </p>
+          <pre id="get-started-command" class="install-command">git clone https://github.com/johnpitchko/tallyloot.git
+cd tallyloot
+docker build -t tallyloot .
+docker run -d -p 3000:80 -v tallyloot:/rails/storage --name tallyloot tallyloot</pre>
+          <p class="subtitle is-5 mt-5">
+            Then open <strong>http://localhost:3000</strong>.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contribute Section -->
+    <section id="contribute" class="section is-dark-elevated is-medium">
+      <div class="container has-text-centered">
+        <h2 class="title is-2 section-title">Questions or Ideas?</h2>
+        <p class="subtitle is-5 section-subtitle">
+          Report a bug, suggest a feature, or send a pull request on GitHub.
+        </p>
+        <a
+          id="contribute-github"
+          href="https://github.com/johnpitchko/tallyloot/issues"
+          class="button is-primary-cta is-large"
+        >
+          Open an Issue
+        </a>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="footer" class="footer is-dark">
+      <div class="container has-text-centered">
+        <div class="logo mb-4" style="justify-content: center">
+          <svg
+            class="logo-icon"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path
+              d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"
+            />
+          </svg>
+          <span>Tallyloot</span>
+        </div>
+        <p
+          class="mb-4"
+          style="
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+          "
+        >
+          Tallyloot is not a financial advisor. Information provided is for
+          educational purposes only. Please consult a qualified financial
+          professional before making investment decisions.
+        </p>
+        <p>&copy; 2026 John Pitchko. Released under the <a id="footer-license" href="https://github.com/johnpitchko/tallyloot/blob/main/LICENSE">MIT licence</a>.</p>
+        <div class="footer-links">
+          <a id="footer-github" href="https://github.com/johnpitchko/tallyloot">GitHub</a>
+          <a id="footer-disclaimer" href="disclaimer.html">Disclaimer</a>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

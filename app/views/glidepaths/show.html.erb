@@ -1,0 +1,28 @@
+<%= turbo_frame_tag "glidepath_details" do %>
+  <table class="table is-narrow is-striped is-fullwidth mt-3" id="glidepath_details_table">
+    <thead>
+      <tr>
+        <th>Age</th>
+        <th>Allocation</th>
+        <th>Nominal Return</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @steps.each_with_index do |step, i| %>
+        <% next_step = @steps[i + 1] %>
+        <tr id="glidepath_step_<%= step.id %>">
+          <td>
+            <%= step.start_age %>
+            <% if next_step %>
+              – <%= next_step.start_age - 1 %>
+            <% else %>
+              +
+            <% end %>
+          </td>
+          <td><%= step.allocation.name %></td>
+          <td><%= number_to_percentage(step.allocation.avg_nominal_return * 100, precision: 1) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

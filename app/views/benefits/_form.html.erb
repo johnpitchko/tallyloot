@@ -1,0 +1,43 @@
+<%= form_with model: [@user, @benefit] do |form| %>
+
+  <% if @benefit.errors.any? %>
+    <div class="notification is-danger is-light" id="benefit_errors">
+      <ul>
+        <% @benefit.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="columns">
+    <div class="column is-half">
+      <div class="field">
+        <label class="label">Type</label>
+        <div class="control">
+          <div class="select is-fullwidth">
+            <%= form.select :type, Benefit.type_options, {}, { class: "input" } %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%= render "benefits/fields", form: form, benefit: @benefit %>
+
+  <div class="field is-grouped mt-4">
+    <div class="control">
+      <%= form.submit @benefit.persisted? ? "Update Benefit" : "Create Benefit", class: "button is-primary" %>
+    </div>
+    <div class="control">
+      <%= link_to "Cancel", root_path, class: "button is-light" %>
+    </div>
+    <% if @benefit.persisted? %>
+      <div class="control ml-auto">
+        <%= link_to "Delete Benefit", user_benefit_path(@user, @benefit),
+            class: "button is-danger is-outlined",
+            data: { turbo_method: :delete, turbo_confirm: "Are you sure you want to delete #{@benefit.name}? This cannot be undone." } %>
+      </div>
+    <% end %>
+  </div>
+<% end %>

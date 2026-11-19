@@ -1,0 +1,49 @@
+<%= form_with model: user, url: user.persisted? ? user_path(user) : users_path,
+      data: { controller: "year-calculator" } do |form| %>
+  <% if user.errors.any? %>
+    <div class="notification is-danger is-light" id="user_errors">
+      <ul>
+        <% user.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="columns is-mobile">
+    <div class="column">
+      <%= bulma_field form, :name, show_label: true, placeholder: "Name" %>
+    </div>
+  </div>
+
+  <%= bulma_field_with_addon form, :birth_date,
+      type: :date_field,
+      addon_target: "currentAge",
+      data: { year_calculator_target: "birthDate", action: "change->year-calculator#calculate" } %>
+
+  <div class="columns is-mobile">
+    <div class="column">
+      <%= bulma_field_with_addon form, :retirement_age,
+          type: :number_field,
+          addon_target: "retirementYear",
+          step: 1, min: 18, max: 120,
+          data: { year_calculator_target: "retirementAge", action: "input->year-calculator#calculate" } %>
+    </div>
+    <div class="column">
+      <%= bulma_field_with_addon form, :life_expectancy,
+          type: :number_field,
+          addon_target: "lifeExpectancyYear",
+          step: 1, min: 0, max: 120,
+          data: { year_calculator_target: "lifeExpectancy", action: "input->year-calculator#calculate" } %>
+    </div>
+  </div>
+
+  <div class="field is-grouped mt-3">
+    <div class="control">
+      <%= form.submit user.persisted? ? "Save" : "Add Partner", class: "button is-primary is-small" %>
+    </div>
+    <div class="control">
+      <%= link_to "Cancel", root_path, class: "button is-light is-small" %>
+    </div>
+  </div>
+<% end %>

@@ -1,0 +1,17 @@
+<%= turbo_frame_tag 'account_form' do %>
+  <div class="box mt-3 p-4 workspace-form" id="select_account_type_box">
+    <h2 class="title is-6 mb-1">Choose Account Type</h2>
+    <p class="subtitle is-7 mb-3"><%= @user.name %></p>
+
+    <div class="buttons" id="select_account_type">
+      <% Account.type_options.each do |label, type| %>
+        <%= link_to label,
+            new_user_account_path(@user, type: type),
+            class: "button is-small is-primary is-outlined",
+            id: "account_type_#{type.demodulize.underscore}" %>
+      <% end %>
+    </div>
+
+    <%= link_to "Cancel", root_path, class: "button is-small is-light" %>
+  </div>
+<% end %>

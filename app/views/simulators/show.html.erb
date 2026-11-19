@@ -1,0 +1,391 @@
+<h1 class="title">Simulator</h1>
+<p class="subtitle">Adjust parameters to model "what-if" scenarios. The simulated line shows how changes affect your projection.</p>
+
+<div class="columns">
+  <%# Form column %>
+  <div class="column is-one-third">
+    <%= form_with url: simulator_path, method: :get,
+        data: { controller: "simulation-form", turbo_frame: "simulation_results",
+                action: "input->simulation-form#schedule change->simulation-form#schedule" } do |f| %>
+
+      <%# Household section %>
+      <div class="box">
+        <p class="title is-6">Household</p>
+        <div class="field">
+          <label class="label" for="retirement_income_goal">
+            Annual Retirement Income Goal
+          </label>
+          <div class="field has-addons">
+            <div class="control">
+              <span class="button is-static">$</span>
+            </div>
+            <div class="control is-expanded">
+              <%= f.text_field :retirement_income_goal,
+                  id: "retirement_income_goal",
+                  value: params[:retirement_income_goal].presence || @household.retirement_income_goal,
+                  class: "input",
+                  inputmode: "numeric",
+                  placeholder: "e.g., 80,000",
+                  data: { controller: "currency-input", action: "focus->currency-input#focus blur->currency-input#blur" } %>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <%# Portfolio section %>
+      <div class="box" id="portfolio_section">
+        <p class="title is-6">Portfolio</p>
+        <div class="field">
+          <label class="label" for="glidepath_id">
+            Investment Glidepath
+            <span class="info-tooltip" data-tooltip="How your investment mix shifts from stocks to bonds as you age.">?</span>
+          </label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <select name="glidepath_id" id="glidepath_id">
+                <% @glidepaths.each do |glidepath| %>
+                  <option
+                    value="<%= glidepath.id %>"
+                    <%= "selected" if (params[:glidepath_id].presence&.to_i || @household.portfolio.glidepath_id) == glidepath.id %>
+                  >
+                    <%= glidepath.name %>
+                  </option>
+                <% end %>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <%# Per-user sections %>
+      <% @household.users.each do |user| %>
+        <div class="box" id="user_<%= user.id %>" data-controller="simulation-advisory">
+          <p class="title is-6"><%= user.name %></p>
+
+          <%# Retirement age & life expectancy %>
+          <div class="columns">
+            <div class="column">
+              <div class="field">
+                <label class="label" for="users_<%= user.id %>_retirement_age">Retirement Age</label>
+                <div class="control">
+                  <input
+                    type="number"
+                    id="users_<%= user.id %>_retirement_age"
+                    name="users[<%= user.id %>][retirement_age]"
+                    class="input"
+                    step="1"
+                    min="18"
+                    max="100"
+                    value="<%= params.dig(:users, user.id.to_s, :retirement_age).presence || user.retirement_age %>"
+                    data-simulation-advisory-target="retirementAgeInput"
+                    data-action="change->simulation-advisory#showNotice change->simulation-advisory#validate"
+                  >
+                </div>
+              </div>
+            </div>
+            <div class="column">
+              <div class="field">
+                <label class="label" for="users_<%= user.id %>_life_expectancy">Life Expectancy</label>
+                <div class="control">
+                  <input
+                    type="number"
+                    id="users_<%= user.id %>_life_expectancy"
+                    name="users[<%= user.id %>][life_expectancy]"
+                    class="input"
+                    step="1"
+                    min="18"
+                    max="120"
+                    value="<%= params.dig(:users, user.id.to_s, :life_expectancy).presence || user.life_expectancy %>"
+                    data-simulation-advisory-target="lifeExpectancyInput"
+                    data-action="change->simulation-advisory#validate"
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="help is-danger"
+             id="users_<%= user.id %>_age_error"
+             style="display:none"
+             data-simulation-advisory-target="ageError"></p>
+
+          <div class="notification is-warning is-light mt-2"
+               style="display:none"
+               data-simulation-advisory-target="notice">
+            <strong>Heads up:</strong> Retirement age changed — collection ages for pensions and
+            benefits below remain unchanged. Update them here if needed.
+          </div>
+
+          <%# User's accounts %>
+          <% if user.accounts.any? %>
+            <p class="heading has-text-grey mt-4 mb-2">Accounts</p>
+            <% user.accounts.each do |account| %>
+              <div class="field" id="account_<%= account.id %>">
+                <label class="label" for="account_contribution_<%= account.id %>">
+                  <%= account.name %>
+                  <span class="is-size-7 has-text-grey">(<%= account.type_name %>)</span>
+                </label>
+                <div class="field has-addons">
+                  <div class="control is-expanded">
+                    <input
+                      type="number"
+                      id="account_contribution_<%= account.id %>"
+                      name="accounts[<%= account.id %>][contribution]"
+                      class="input"
+                      step="500"
+                      min="0"
+                      placeholder="Annual contribution"
+                      value="<%= params.dig(:accounts, account.id.to_s, :contribution).presence || account.contribution %>"
+                    >
+                  </div>
+                  <div class="control">
+                    <span class="button is-static">$/yr</span>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          <% end %>
+
+          <%# User's pensions %>
+          <% if user.pensions.any? %>
+            <p class="heading has-text-grey mt-4 mb-2">Pensions</p>
+            <% user.pensions.each do |pension| %>
+              <div class="field" id="pension_<%= pension.id %>">
+                <label class="label" for="pension_start_age_<%= pension.id %>">
+                  <%= pension.name %>
+                  <span class="is-size-7 has-text-grey">Collection age</span>
+                </label>
+                <div class="control">
+                  <input
+                    type="number"
+                    id="pension_start_age_<%= pension.id %>"
+                    name="pensions[<%= pension.id %>][start_age]"
+                    class="input"
+                    step="1"
+                    min="18"
+                    max="100"
+                    value="<%= params.dig(:pensions, pension.id.to_s, :start_age).presence || pension.start_age %>"
+                  >
+                </div>
+              </div>
+            <% end %>
+          <% end %>
+
+          <%# User's benefits %>
+          <% if user.benefits.any? %>
+            <p class="heading has-text-grey mt-4 mb-2">Benefits</p>
+            <% user.benefits.each do |benefit| %>
+              <div class="field" id="benefit_<%= benefit.id %>">
+                <label class="label" for="benefit_start_age_<%= benefit.id %>">
+                  <%= benefit.name %>
+                  <span class="is-size-7 has-text-grey">Collection age</span>
+                </label>
+                <div class="control">
+                  <input
+                    type="number"
+                    id="benefit_start_age_<%= benefit.id %>"
+                    name="benefits[<%= benefit.id %>][start_age]"
+                    class="input"
+                    step="1"
+                    min="18"
+                    max="100"
+                    value="<%= params.dig(:benefits, benefit.id.to_s, :start_age).presence || benefit.start_age %>"
+                  >
+                </div>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+
+      <div class="field">
+        <%= link_to "Reset", simulator_path, class: "button is-ghost is-fullwidth",
+            data: { turbo_frame: "_top" } %>
+      </div>
+
+    <% end %>
+  </div>
+
+  <%# Charts column — the turbo-frame IS the column so Bulma flexbox stays intact %>
+  <%= turbo_frame_tag "simulation_results", class: "column is-two-thirds" do %>
+
+
+      <%# Summary stat cards %>
+      <div class="columns" id="simulation_summary">
+        <div class="column">
+          <div class="box summary-card has-text-centered" id="sim_summary_peak_net_worth">
+            <p class="heading">Peak Net Worth</p>
+            <p class="title is-4"><%= number_to_currency(@summary_stats[:simulated_peak_net_worth], precision: 0) %></p>
+            <% delta = @summary_stats[:peak_net_worth_delta] %>
+            <% if delta != 0 %>
+              <p class="subtitle is-6 <%= delta >= 0 ? 'has-text-success' : 'has-text-danger' %>">
+                <%= delta >= 0 ? '↑' : '↓' %> <%= number_to_currency(delta.abs, precision: 0) %> vs current plan
+              </p>
+            <% else %>
+              <p class="subtitle is-6 has-text-grey">projected peak</p>
+            <% end %>
+          </div>
+        </div>
+        <div class="column">
+          <div class="box summary-card has-text-centered" id="sim_summary_avg_income">
+            <p class="heading">Avg. Annual Retirement Income</p>
+            <% if @summary_stats[:simulated_avg_income].positive? %>
+              <p class="title is-4"><%= number_to_currency(@summary_stats[:simulated_avg_income], precision: 0) %></p>
+              <% delta = @summary_stats[:avg_income_delta] %>
+              <% if delta.nonzero? %>
+                <p class="subtitle is-6 <%= delta >= 0 ? 'has-text-success' : 'has-text-danger' %>">
+                  <%= delta >= 0 ? '↑' : '↓' %> <%= number_to_currency(delta.abs, precision: 0) %> vs current plan
+                </p>
+              <% end %>
+              <p class="subtitle is-6 has-text-grey">today's $</p>
+            <% else %>
+              <p class="title is-4 has-text-grey">—</p>
+              <p class="subtitle is-6 has-text-grey">no retirement income projected</p>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <div class="box"
+           id="net_worth_simulation_chart"
+           data-controller="simulation-chart"
+           data-simulation-chart-chart-data-value="<%= @net_worth_chart_data.to_json %>"
+           data-simulation-chart-title-value="Net Worth"
+           data-simulation-chart-users-value="<%= @users_for_chart.to_json %>">
+        <div class="level mb-2">
+          <div class="level-left">
+            <p class="title is-5">
+              Net Worth
+              <span class="info-tooltip" data-tooltip="Total projected account balances over time. The grey dashed line shows your current plan; the green line shows the simulation.">?</span>
+            </p>
+          </div>
+          <% if @users_for_chart.length > 1 %>
+            <div class="level-right">
+              <div class="level-item">
+                <div class="select is-small" id="net_worth_user_filter">
+                  <select data-simulation-chart-target="userFilter" data-action="change->simulation-chart#filter">
+                    <option value="all">Entire Household</option>
+                    <% @users_for_chart.each do |user| %>
+                      <option value="<%= user[:id] %>"><%= user[:name] %></option>
+                    <% end %>
+                  </select>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+        <div data-simulation-chart-target="chartContainer"></div>
+
+        <details id="net_worth_breakdown" class="mt-4">
+          <summary class="has-text-grey" style="cursor:pointer">Show year-by-year breakdown</summary>
+          <div class="table-container mt-3">
+            <table class="table is-fullwidth is-striped is-narrow is-hoverable">
+              <thead>
+                <tr>
+                  <th>Year</th>
+                  <th class="has-text-right">Current</th>
+                  <th class="has-text-right">Simulated</th>
+                  <th class="has-text-right">Δ</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @net_worth_rows.each do |row| %>
+                  <tr id="net_worth_row_<%= row[:year] %>">
+                    <td><%= row[:year] %></td>
+                    <td class="has-text-right"><%= number_to_currency(row[:current], precision: 0) %></td>
+                    <td class="has-text-right"><%= number_to_currency(row[:simulated], precision: 0) %></td>
+                    <td class="has-text-right <%= row[:delta] >= 0 ? 'has-text-success' : 'has-text-danger' %>">
+                      <%= row[:delta] >= 0 ? '+' : '' %><%= number_to_currency(row[:delta], precision: 0) %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </details>
+      </div>
+
+      <div class="box"
+           id="income_simulation_chart"
+           data-controller="simulation-chart"
+           data-simulation-chart-chart-data-value="<%= @income_chart_data.to_json %>"
+           data-simulation-chart-title-value="Income"
+           data-simulation-chart-users-value="<%= @users_for_chart.to_json %>">
+        <div class="level mb-2">
+          <div class="level-left">
+            <p class="title is-5">
+              Retirement Income
+              <span class="info-tooltip" data-tooltip="Projected annual income in retirement (pensions, benefits, and account withdrawals). The grey dashed line shows your current plan; the green line shows the simulation.">?</span>
+            </p>
+          </div>
+          <div class="level-right">
+            <div class="level-item">
+              <div class="buttons has-addons mb-0" id="income_dollars_toggle">
+                <button
+                  class="button is-small is-selected is-primary"
+                  data-simulation-chart-target="nominalBtn"
+                  data-action="simulation-chart#toggleDollars"
+                  data-simulation-chart-mode-param="nominal"
+                  type="button">Future $</button>
+                <button
+                  class="button is-small"
+                  data-simulation-chart-target="realBtn"
+                  data-action="simulation-chart#toggleDollars"
+                  data-simulation-chart-mode-param="real"
+                  type="button">Today's $</button>
+              </div>
+            </div>
+            <% if @users_for_chart.length > 1 %>
+              <div class="level-item">
+                <div class="select is-small" id="income_user_filter">
+                  <select data-simulation-chart-target="userFilter" data-action="change->simulation-chart#filter">
+                    <option value="all">Entire Household</option>
+                    <% @users_for_chart.each do |user| %>
+                      <option value="<%= user[:id] %>"><%= user[:name] %></option>
+                    <% end %>
+                  </select>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+        <div data-simulation-chart-target="chartContainer"></div>
+
+        <details id="income_breakdown" class="mt-4">
+          <summary class="has-text-grey" style="cursor:pointer">Show year-by-year breakdown</summary>
+          <div class="table-container mt-3">
+            <table class="table is-fullwidth is-striped is-narrow is-hoverable">
+              <thead>
+                <tr>
+                  <th>Year</th>
+                  <th class="has-text-right">Current Total</th>
+                  <th class="has-text-right">Simulated Total</th>
+                  <th class="has-text-right">Δ</th>
+                  <th class="has-text-right">Cur. Guaranteed</th>
+                  <th class="has-text-right">Sim. Guaranteed</th>
+                  <th class="has-text-right">Cur. Withdrawals</th>
+                  <th class="has-text-right">Sim. Withdrawals</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @income_rows.each do |row| %>
+                  <tr id="income_row_<%= row[:year] %>">
+                    <td><%= row[:year] %></td>
+                    <td class="has-text-right"><%= number_to_currency(row[:current_income], precision: 0) %></td>
+                    <td class="has-text-right"><%= number_to_currency(row[:simulated_income], precision: 0) %></td>
+                    <td class="has-text-right <%= row[:delta] >= 0 ? 'has-text-success' : 'has-text-danger' %>">
+                      <%= row[:delta] >= 0 ? '+' : '' %><%= number_to_currency(row[:delta], precision: 0) %>
+                    </td>
+                    <td class="has-text-right"><%= number_to_currency(row[:current_guaranteed], precision: 0) %></td>
+                    <td class="has-text-right"><%= number_to_currency(row[:simulated_guaranteed], precision: 0) %></td>
+                    <td class="has-text-right"><%= number_to_currency(row[:current_withdrawals], precision: 0) %></td>
+                    <td class="has-text-right"><%= number_to_currency(row[:simulated_withdrawals], precision: 0) %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </details>
+      </div>
+
+  <% end %>
+</div>

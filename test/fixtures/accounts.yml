@@ -1,0 +1,68 @@
+# == Schema Information
+#
+# Table name: accounts
+#
+#  id                      :integer          not null, primary key
+#  balance                 :integer
+#  contribution            :integer          default(0)
+#  conversion_age          :integer
+#  name                    :string
+#  provincial_jurisdiction :string
+#  type                    :string           not null
+#  created_at              :datetime         not null
+#  updated_at              :datetime         not null
+#  user_id                 :integer          not null
+#
+# Indexes
+#
+#  index_accounts_on_type     (type)
+#  index_accounts_on_user_id  (user_id)
+#
+# Foreign Keys
+#
+#  user_id  (user_id => users.id)
+#
+
+# Non-retired user John
+tfsa_john:
+  name: TFSA
+  type: Account::Tfsa
+  balance: 100000
+  user: working_user_john
+
+rrsp_john:
+  name: RRSP
+  type: Account::Rrsp
+  balance: 200000
+  conversion_age: 71
+  user: working_user_john
+
+# Non-retired user Jane
+tfsa_jane:
+  name: TFSA
+  type: Account::Tfsa
+  balance: 50000
+  user: working_user_jane
+
+rrsp_jane:
+  name: RRSP
+  type: Account::Rrsp
+  balance: 100000
+  conversion_age: 65
+  user: working_user_jane
+
+# Retired users
+lira_bob:
+  name: LIRA
+  type: Account::Lira
+  balance: 40000
+  conversion_age: 65
+  provincial_jurisdiction: AB
+  user: retired_user_bob
+
+rrif_sue:
+  name: RRSP/RRIF
+  type: Account::Rrsp
+  balance: 30000
+  conversion_age: 71
+  user: retired_user_sue

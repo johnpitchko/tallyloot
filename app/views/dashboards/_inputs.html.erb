@@ -1,0 +1,215 @@
+<%# Left-hand input panel. Each section edits records in a Turbo Frame; a save
+    refreshes the whole dashboard so the results on the right update. %>
+<% users = household.users.order(:created_at).to_a %>
+<% accounts = household.accounts.includes(:user).order(:created_at) %>
+<% pensions = household.pensions.includes(:user).order(:created_at) %>
+<% benefits = household.benefits.includes(:user).order(:created_at) %>
+<% employments = household.employments.includes(:user) %>
+
+<div class="box p-0 workspace-inputs" id="workspace_inputs">
+  <details class="workspace-section" id="inputs_people" data-controller="disclosure" open>
+    <summary class="workspace-section-summary">
+      <span class="has-text-weight-semibold">People</span>
+      <span class="has-text-grey is-size-7">
+        <%= users.map { |u| "#{u.name.presence || 'You'} #{u.age} → #{u.retirement_age}" }.join(', ') %>
+      </span>
+    </summary>
+    <div class="workspace-section-body">
+      <% users.each do |user| %>
+        <%= turbo_frame_tag "person_#{user.id}" do %>
+          <div class="workspace-row" id="person_row_<%= user.id %>">
+            <div>
+              <p><%= user.name.presence || "You" %></p>
+              <p class="is-size-7 has-text-grey">
+                Age <%= user.age %>, retires at <%= user.retirement_age %> (<%= user.retirement_year %>),
+                plan to <%= user.life_expectancy %>
+              </p>
+            </div>
+            <%= link_to "Edit", edit_user_path(user), class: "button is-small is-ghost",
+                  id: "edit_person_#{user.id}" %>
+          </div>
+        <% end %>
+      <% end %>
+      <% if users.size < 2 %>
+        <div class="buttons mt-2">
+          <%= link_to "Add spouse or partner", new_user_path, class: "button is-small is-light",
+                id: "add_partner", data: { turbo_frame: "person_form" } %>
+        </div>
+      <% end %>
+      <%= turbo_frame_tag "person_form" %>
+    </div>
+  </details>
+
+  <details class="workspace-section" id="inputs_accounts" data-controller="disclosure" open>
+    <summary class="workspace-section-summary">
+      <span class="has-text-weight-semibold">Accounts</span>
+      <span class="has-text-grey is-size-7"><%= number_to_currency accounts.sum(&:balance), precision: 0 %></span>
+    </summary>
+    <div class="workspace-section-body">
+      <% accounts.each do |account| %>
+        <%= turbo_frame_tag "account_#{account.id}" do %>
+          <div class="workspace-row" id="account_row_<%= account.id %>">
+            <div>
+              <p><%= account.name %></p>
+              <p class="is-size-7 has-text-grey">
+                <%= account.type_name %><%= " · #{account.user.name}" if users.size > 1 %>
+                <% if account.contribution.to_i.positive? %>
+                  · +<%= number_to_currency account.contribution, precision: 0 %>/yr
+                <% end %>
+              </p>
+            </div>
+            <div class="is-flex is-align-items-center">
+              <span class="mr-2"><%= number_to_currency account.balance, precision: 0 %></span>
+              <%= link_to "Edit", edit_user_account_path(account.user, account), class: "button is-small is-ghost",
+                    id: "edit_account_link_#{account.id}" %>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+      <div class="buttons mt-2">
+        <% users.each do |user| %>
+          <%= link_to new_user_account_path(user), class: "button is-small is-light",
+                id: "add_account_user_#{user.id}", data: { turbo_frame: "account_form" } do %>
+            Add account<%= " for #{user.name}" if users.size > 1 %>
+          <% end %>
+        <% end %>
+      </div>
+      <%= turbo_frame_tag "account_form" %>
+    </div>
+  </details>
+
+  <details class="workspace-section" id="inputs_pensions" data-controller="disclosure">
+    <summary class="workspace-section-summary">
+      <span class="has-text-weight-semibold">Pensions</span>
+      <span class="has-text-grey is-size-7"><%= pensions.any? ? pluralize(pensions.size, "pension") : "None" %></span>
+    </summary>
+    <div class="workspace-section-body">
+      <% pensions.each do |pension| %>
+        <%= turbo_frame_tag "pension_#{pension.id}" do %>
+          <div class="workspace-row" id="pension_row_<%= pension.id %>">
+            <div>
+              <p><%= pension.name %></p>
+              <p class="is-size-7 has-text-grey">
+                From age <%= pension.start_age %><%= " · #{pension.user.name}" if users.size > 1 %>
+              </p>
+            </div>
+            <div class="is-flex is-align-items-center">
+              <span class="mr-2"><%= number_to_currency pension.annual_amount, precision: 0 %>/yr</span>
+              <%= link_to "Edit", edit_user_pension_path(pension.user, pension), class: "button is-small is-ghost",
+                    id: "edit_pension_link_#{pension.id}" %>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+      <div class="buttons mt-2">
+        <% users.each do |user| %>
+          <%= link_to new_user_pension_path(user), class: "button is-small is-light",
+                id: "add_pension_user_#{user.id}", data: { turbo_frame: "pension_form" } do %>
+            Add pension<%= " for #{user.name}" if users.size > 1 %>
+          <% end %>
+        <% end %>
+      </div>
+      <%= turbo_frame_tag "pension_form" %>
+    </div>
+  </details>
+
+  <details class="workspace-section" id="inputs_benefits" data-controller="disclosure">
+    <summary class="workspace-section-summary">
+      <span class="has-text-weight-semibold">CPP, OAS &amp; Benefits</span>
+      <span class="has-text-grey is-size-7">
+        <%= benefits.any? ? number_to_currency(benefits.sum(&:annual_amount), precision: 0) + "/yr" : "None" %>
+      </span>
+    </summary>
+    <div class="workspace-section-body">
+      <% benefits.each do |benefit| %>
+        <%= turbo_frame_tag "benefit_#{benefit.id}" do %>
+          <div class="workspace-row" id="benefit_row_<%= benefit.id %>">
+            <div>
+              <p><%= benefit.name %></p>
+              <p class="is-size-7 has-text-grey">
+                From age <%= benefit.start_age %><%= " · #{benefit.user.name}" if users.size > 1 %>
+              </p>
+            </div>
+            <div class="is-flex is-align-items-center">
+              <span class="mr-2"><%= number_to_currency benefit.annual_amount, precision: 0 %>/yr</span>
+              <%= link_to "Edit", edit_user_benefit_path(benefit.user, benefit), class: "button is-small is-ghost",
+                    id: "edit_benefit_link_#{benefit.id}" %>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+      <div class="buttons mt-2">
+        <% users.each do |user| %>
+          <%= link_to new_user_benefit_path(user), class: "button is-small is-light",
+                id: "add_benefit_user_#{user.id}", data: { turbo_frame: "benefit_form" } do %>
+            Add benefit<%= " for #{user.name}" if users.size > 1 %>
+          <% end %>
+        <% end %>
+      </div>
+      <%= turbo_frame_tag "benefit_form" %>
+    </div>
+  </details>
+
+  <% if employments.any? %>
+    <details class="workspace-section" id="inputs_employment" data-controller="disclosure">
+      <summary class="workspace-section-summary">
+        <span class="has-text-weight-semibold">Work in Retirement</span>
+        <span class="has-text-grey is-size-7">
+          <% working = employments.select { |e| e.annual_income.positive? } %>
+          <%= working.any? ? number_to_currency(working.sum(&:annual_income), precision: 0) + "/yr" : "None" %>
+        </span>
+      </summary>
+      <div class="workspace-section-body">
+        <% employments.each do |employment| %>
+          <%= turbo_frame_tag "employment_#{employment.id}" do %>
+            <div class="workspace-row" id="employment_row_<%= employment.id %>">
+              <div>
+                <p><%= employment.user.name %></p>
+                <p class="is-size-7 has-text-grey">
+                  <% if employment.annual_income.positive? %>
+                    Age <%= employment.start_age %> to <%= employment.end_age %>
+                  <% else %>
+                    No paid work planned
+                  <% end %>
+                </p>
+              </div>
+              <div class="is-flex is-align-items-center">
+                <span class="mr-2"><%= number_to_currency employment.annual_income, precision: 0 %>/yr</span>
+                <%= link_to "Edit", edit_user_employment_path(employment.user, employment),
+                      class: "button is-small is-ghost",
+                      id: "edit_employment_link_#{employment.id}" %>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    </details>
+  <% end %>
+
+  <details class="workspace-section" id="inputs_assumptions" data-controller="disclosure">
+    <summary class="workspace-section-summary">
+      <span class="has-text-weight-semibold">Goals &amp; Assumptions</span>
+      <span class="has-text-grey is-size-7">
+        <%= number_to_currency(household.retirement_income_goal.to_i, precision: 0) %>/yr goal
+        · <%= number_to_percentage(household.portfolio.inflation_rate * 100, precision: 1) %> inflation
+      </span>
+    </summary>
+    <div class="workspace-section-body workspace-form">
+      <%= turbo_frame_tag "household_settings" do %>
+        <%= form_for household, url: household_path do |form| %>
+          <%= render "households/fields", form: form %>
+          <%= form.submit "Save", class: "button is-primary is-small", id: "save_household_settings" %>
+        <% end %>
+      <% end %>
+
+      <hr>
+
+      <%= turbo_frame_tag "portfolio_settings" do %>
+        <%= form_for household.portfolio, url: portfolio_path, method: :patch do |form| %>
+          <%= render "portfolios/fields", form: form %>
+          <%= form.submit "Save", class: "button is-primary is-small", id: "save_portfolio_settings" %>
+        <% end %>
+      <% end %>
+    </div>
+  </details>
+</div>

@@ -1,0 +1,21 @@
+<section class="section" id="benefits">
+  <h1 class="title is-3">Government Benefits</h1>
+  <p class="subtitle is-6">Canada Pension Plan (CPP), Old Age Security (OAS), and other government benefits</p>
+
+  <% @household.users.each do |user| %>
+    <div class="panel" id="user_<%= user.id %>_benefits">
+      <div class="panel-heading">
+        <h3><%= user.name %>'s Benefits</h3>
+      </div>
+
+      <% user.benefits.each do |benefit| %>
+        <%= link_to edit_user_benefit_path(user, benefit), class: "panel-block is-justify-content-space-between", id: "benefit_#{benefit.id}" do %>
+          <%= render "benefit", benefit: benefit %>
+        <% end %>
+      <% end %>
+      <div class="panel-block">
+        <%= link_to "Add Benefit", new_user_benefit_path(user), class: "button is-primary is-outlined is-small" %>
+      </div>
+    </div>
+  <% end %>
+</section>

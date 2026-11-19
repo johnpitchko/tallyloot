@@ -1,0 +1,89 @@
+<p class="help mt-1">
+  <a data-action="click->benefit-estimator#togglePanel" href="#">Don't know your amount? Use our estimator</a>
+</p>
+
+<div data-benefit-estimator-target="panel" class="box is-hidden mt-3">
+  <p class="mb-3">
+    <strong>For the most accurate figure</strong>, look up your personal estimate on
+    <a href="https://www.canada.ca/en/employment-social-development/services/my-account.html" target="_blank" rel="noopener noreferrer">
+      My Service Canada Account (MSCA)
+    </a>
+    or use the
+    <a href="https://www.canada.ca/en/services/benefits/publicpensions/cpp/retirement-income-calculator.html" target="_blank" rel="noopener noreferrer">
+      Canadian Retirement Income Calculator
+    </a>.
+    The estimator below uses a simplified formula and may not reflect your exact entitlement.
+  </p>
+
+  <% if benefit.type == 'Benefit::Cpp' %>
+    <div class="columns">
+      <div class="column is-half">
+        <div class="field">
+          <label class="label is-small">Years contributed to CPP</label>
+          <div class="control">
+            <input class="input is-small" type="number" min="0" max="39" step="1" placeholder="e.g. 30"
+                   data-benefit-estimator-target="yearsContributed"
+                   data-action="input->benefit-estimator#calculate">
+          </div>
+          <p class="help">Maximum 39 qualifying years</p>
+        </div>
+      </div>
+      <div class="column is-half">
+        <div class="field">
+          <label class="label is-small">Average annual income while working</label>
+          <div class="control">
+            <div class="select is-small is-fullwidth">
+              <select data-benefit-estimator-target="incomeBracket"
+                      data-action="change->benefit-estimator#calculate">
+                <option value="">Select a range...</option>
+                <option value="low">Under $40,000/year</option>
+                <option value="middle">$40,000 – $70,000/year</option>
+                <option value="high">$70,000 – $100,000/year</option>
+                <option value="maximum">Over $100,000/year</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% elsif benefit.type == 'Benefit::Oas' %>
+    <div class="columns">
+      <div class="column is-half">
+        <div class="field">
+          <label class="label is-small">Years lived in Canada after age 18</label>
+          <div class="control">
+            <input class="input is-small" type="number" min="0" max="40" step="1" placeholder="e.g. 35"
+                   data-benefit-estimator-target="yearsResident"
+                   data-action="input->benefit-estimator#calculate">
+          </div>
+          <p class="help">Full OAS requires 40 years of Canadian residency</p>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="level">
+    <div class="level-left">
+      <div class="level-item">
+        <p>
+          Estimated annual amount (at age 65):
+          <strong data-benefit-estimator-target="estimatedAmount">—</strong>
+        </p>
+      </div>
+    </div>
+    <div class="level-right">
+      <div class="level-item">
+        <div class="buttons">
+          <button type="button" class="button is-small is-link"
+                  data-action="click->benefit-estimator#apply">
+            Apply this estimate
+          </button>
+          <button type="button" class="button is-small"
+                  data-action="click->benefit-estimator#cancel">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

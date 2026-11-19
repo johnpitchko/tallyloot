@@ -1,0 +1,6 @@
+# Recurring Solid Queue jobs, e.g.:
+#
+# production:
+#   periodic_cleanup:
+#     class: CleanSoftDeletedRecordsJob
+#     schedule: every day at midnight

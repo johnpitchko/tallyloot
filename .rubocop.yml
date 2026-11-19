@@ -1,0 +1,73 @@
+---
+# Omakase Ruby styling for Rails
+# inherit_gem: {rubocop-rails-omakase: rubocop.yml}
+# Overwrite or add rules to create your own house style
+#
+AllCops:
+  TargetRubyVersion: 3.4
+  NewCops: enable
+  Exclude:
+    - bin/*
+    - db/schema.rb
+    - db/structure.sql
+    - db/queue_schema.rb
+    - db/migrate/*_init_schema.rb
+    - node_modules/**/*
+    - vendor/**/*
+    - test/**/*
+plugins: [rubocop-rails]
+# String style: prefer single quotes unless interpolation or escapes are used
+Style/StringLiterals:
+  EnforcedStyle: single_quotes
+# Don't require this comment — not needed in modern Ruby
+Style/FrozenStringLiteralComment:
+  Enabled: false
+# Use safe navigation like `foo&.bar`
+Style/SafeNavigation:
+  Enabled: true
+# Allow single-line conditionals like `foo if bar`
+Style/IfUnlessModifier:
+  Enabled: true
+Layout/LineLength:
+  Max: 120
+# Enforce consistent indentation and alignment
+Layout/BlockAlignment:
+  Enabled: true
+Layout/EndAlignment:
+  Enabled: true
+Layout/IndentationWidth:
+  Width: 2
+Metrics/AbcSize:
+  Exclude: [db/migrate/*]
+Metrics/BlockLength:
+  Exclude:
+    - db/migrate/*
+    - config/environments/*.rb
+    - config/routes.rb
+Metrics/MethodLength:
+  Exclude: [db/migrate/*]
+Metrics/ClassLength:
+  Max: 120
+# Allow omission of parens when obvious
+Style/MethodCallWithoutArgsParentheses:
+  Enabled: false
+# Don't require top-level class/module doc comments
+Style/Documentation:
+  Enabled: false
+# Trailing commas in multi-line literals
+Style/TrailingCommaInArrayLiteral:
+  EnforcedStyleForMultiline: consistent_comma
+Style/TrailingCommaInHashLiteral:
+  EnforcedStyleForMultiline: consistent_comma
+# Require `do...end` for multiline blocks, `{}` for single-line
+Style/BlockDelimiters:
+  EnforcedStyle: line_count_based
+Rails:
+  Enabled: true
+# Don't deal with any locale files yet
+Rails/I18nLocaleTexts:
+  Enabled: false
+Rails/ReversibleMigration:
+  Enabled: false
+Rails/Output:
+  Enabled: false

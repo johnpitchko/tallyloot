@@ -1,0 +1,10 @@
+<span>
+  <span class="pension-name"><%= pension.name %></span>
+  <br>
+  <span class="is-size-7"><%= pension.inflation_indexed? ? "Inflation indexed" : "Not indexed" %></span>
+</span>
+<span class="has-text-right">
+  <span class="pension-amount"><%= number_to_currency pension.annual_amount, precision: 0 %></span>
+  <br>
+  <span class="is-size-7">Age <%= pension.start_age %> (<%= pension.start_year %>)</span>
+</span>

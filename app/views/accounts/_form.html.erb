@@ -1,0 +1,61 @@
+<%= form_with model: [@user, @account] do |form| %>
+
+  <% if @account.errors.any? %>
+    <div class="notification is-danger is-light" id="account_errors">
+      <ul>
+        <% @account.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="columns">
+    <div class="column is-half">
+      <div class="field">
+        <label class="label">Type</label>
+        <div class="control">
+          <div class="select is-fullwidth">
+            <%= form.select :type, Account.type_options, {}, { class: "input" } %>
+          </div>
+        </div>
+      </div>
+    </div>
+    <% household_users = @user.household.users.order(:created_at) %>
+    <% if household_users.size > 1 %>
+      <div class="column is-half">
+        <div class="field">
+          <label class="label" for="account_user_id">Owner</label>
+          <div class="control">
+            <div class="select is-fullwidth">
+              <%= form.select :user_id, household_users.map { |u| [u.name, u.id] }, {}, { class: "input" } %>
+            </div>
+          </div>
+          <% if @account.is_a?(Account::Rrsp) %>
+            <p class="help" id="spousal_rrsp_hint">
+              For a spousal RRSP, choose the spouse named on the account, not the one who contributes.
+            </p>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <%= render "accounts/fields", form: form, account: @account %>
+
+  <div class="field is-grouped mt-4">
+    <div class="control">
+      <%= form.submit @account.persisted? ? "Update Account" : "Create Account", class: "button is-primary" %>
+    </div>
+    <div class="control">
+      <%= link_to "Cancel", root_path, class: "button is-light" %>
+    </div>
+    <% if @account.persisted? %>
+      <div class="control ml-auto">
+        <%= link_to "Delete Account", user_account_path(@user, @account),
+            class: "button is-danger is-outlined",
+            data: { turbo_method: :delete, turbo_confirm: "Are you sure you want to delete #{@account.name}? This cannot be undone." } %>
+      </div>
+    <% end %>
+  </div>
+<% end %>

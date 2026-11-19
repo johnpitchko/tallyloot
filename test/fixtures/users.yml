@@ -1,0 +1,48 @@
+# == Schema Information
+#
+# Table name: users
+#
+#  id              :integer          not null, primary key
+#  birth_date      :date             not null
+#  life_expectancy :integer          default(82), not null
+#  name            :string
+#  retirement_age  :integer          default(65), not null
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  household_id    :integer
+#
+# Indexes
+#
+#  index_users_on_household_id  (household_id)
+#
+# Foreign Keys
+#
+#  household_id  (household_id => households.id)
+#
+working_user_john:
+  name: John
+  birth_date: 1980-01-01
+  household: non_retired
+working_user_jane:
+  name: Jane
+  birth_date: 1981-01-01
+  household: non_retired
+retired_user_bob:
+  name: Bob
+  birth_date: 1950-01-01
+  household: retired
+retired_user_sue:
+  name: Sue
+  birth_date: 1952-01-01
+  household: retired
+
+onboarding_user:
+  name: New
+  birth_date: 1990-01-01
+  household: onboarding
+
+# Single-user household (no spouse) — for testing add-spouse flow
+single_user:
+  name: Alex
+  birth_date: 1985-06-15
+  household: single

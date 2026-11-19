@@ -1,0 +1,7 @@
+<%= turbo_frame_tag @employment do %>
+  <div class="box my-3 p-4 workspace-form" id="edit_employment_<%= @employment.id %>">
+    <h2 class="title is-6 mb-1"><%= @user.name %>'s Work in Retirement</h2>
+    <p class="subtitle is-7 mb-3">Income from part-time work, consulting, or contract roles during retirement.</p>
+    <%= render "form" %>
+  </div>
+<% end %>

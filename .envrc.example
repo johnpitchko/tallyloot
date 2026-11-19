@@ -1,0 +1,4 @@
+# Copy this file to `.envrc` and run `direnv allow` in this directory
+# Customize the values below for your local dev environment
+
+RAILS_PORT=3000

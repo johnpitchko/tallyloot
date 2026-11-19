@@ -1,0 +1,23 @@
+#!/bin/bash -e
+
+# Enable jemalloc for reduced memory usage and latency.
+if [ -z "${LD_PRELOAD+x}" ]; then
+    LD_PRELOAD=$(find /usr/lib -name libjemalloc.so.2 -print -quit)
+    export LD_PRELOAD
+fi
+
+# Generate a secret key on first boot and keep it with the database, so sessions
+# survive restarts without the user having to supply one.
+if [ -z "${SECRET_KEY_BASE}" ]; then
+  key_file=storage/secret_key_base
+  [ -f "$key_file" ] || (umask 077 && ruby -rsecurerandom -e 'puts SecureRandom.hex(64)' > "$key_file")
+  SECRET_KEY_BASE=$(cat "$key_file")
+  export SECRET_KEY_BASE
+fi
+
+# If running the rails server then create or migrate existing database
+if [ "${@: -2:1}" == "./bin/rails" ] && [ "${@: -1:1}" == "server" ]; then
+  ./bin/rails db:prepare
+fi
+
+exec "${@}"

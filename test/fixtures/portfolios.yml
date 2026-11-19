@@ -1,0 +1,33 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+# == Schema Information
+#
+# Table name: portfolios
+#
+#  id                     :integer          not null, primary key
+#  inflation_rate         :decimal(5, 2)
+#  spending_smile_enabled :boolean          default(FALSE), not null
+#  created_at             :datetime         not null
+#  updated_at             :datetime         not null
+#  glidepath_id           :integer          not null
+#  household_id           :integer          not null
+#
+# Indexes
+#
+#  index_portfolios_on_glidepath_id  (glidepath_id)
+#  index_portfolios_on_household_id  (household_id)
+#
+# Foreign Keys
+#
+#  glidepath_id  (glidepath_id => glidepaths.id)
+#  household_id  (household_id => households.id)
+#
+non_retired_portfolio:
+  glidepath: standard_retirement
+  household: non_retired
+  inflation_rate: 0.02
+
+retired_portfolio:
+  glidepath: standard_retirement
+  household: retired
+  inflation_rate: 0.02

@@ -1,0 +1,10 @@
+<span>
+  <span class="benefit-name"><%= benefit.name %></span>
+  <br>
+  <span class="is-size-7"><%= benefit.type_name %> &mdash; <%= benefit.inflation_indexed? ? "Inflation indexed" : "Not indexed" %></span>
+</span>
+<span class="has-text-right">
+  <span class="benefit-amount"><%= number_to_currency benefit.annual_amount, precision: 0 %></span>
+  <br>
+  <span class="is-size-7">Starting age <%= benefit.start_age %></span>
+</span>

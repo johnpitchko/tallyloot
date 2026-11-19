@@ -1,0 +1,13 @@
+<span>
+  <span class="employment-label"><%= employment.label.presence || "Post-retirement employment" %></span>
+  <br>
+  <span class="is-size-7">
+    Age <%= employment.start_age %> to <%= employment.end_age %>
+    (<%= employment.end_age - employment.start_age %> years)
+  </span>
+</span>
+<span class="has-text-right">
+  <span class="employment-income"><%= number_to_currency employment.annual_income, precision: 0 %></span>
+  <br>
+  <span class="is-size-7">per year</span>
+</span>

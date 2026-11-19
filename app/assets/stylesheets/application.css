@@ -1,0 +1,1008 @@
+/*
+ * Tallyloot - Custom Styles
+ * Inspired by Wealthsimple's dark UI
+ */
+
+@import "https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css";
+
+/* ==========================================================================
+   Color Palette - Wealthsimple Inspired
+   ==========================================================================
+   Background: Dark charcoal with warm undertones
+   Surface: Slightly elevated lighter shade
+   Accent: Vibrant green (growth, prosperity)
+   Text: Off-white, not pure white
+   ========================================================================== */
+
+:root {
+  /* Core dark palette */
+  --tl-bg-base: #121212;
+  --tl-bg-elevated: #1e1e1e;
+  --tl-bg-surface: #2a2a2a;
+  --tl-bg-hover: #333333;
+
+  /* Text colors */
+  --tl-text-primary: #f5f5f5;
+  --tl-text-secondary: #a0a0a0;
+  --tl-text-muted: #6b6b6b;
+
+  /* Accent colors */
+  --tl-accent-green: #4ae087;
+  --tl-accent-green-dark: #3bc472;
+  --tl-accent-red: #e05454;
+
+  /* Border */
+  --tl-border: #2f2f2f;
+
+  /* Override Bulma scheme to force dark mode */
+  --bulma-scheme-main: var(--tl-bg-base);
+  --bulma-scheme-main-bis: var(--tl-bg-elevated);
+  --bulma-scheme-main-ter: var(--tl-bg-surface);
+  --bulma-background: var(--tl-bg-base);
+  --bulma-text: var(--tl-text-primary);
+  --bulma-text-weak: var(--tl-text-secondary);
+
+  /* Override Bulma primary to green */
+  --bulma-primary-h: 145;
+  --bulma-primary-s: 70%;
+  --bulma-primary-l: 58%;
+  --bulma-primary: var(--tl-accent-green);
+
+  /* Link colors */
+  --bulma-link-h: 145;
+  --bulma-link-s: 70%;
+  --bulma-link-l: 58%;
+  --bulma-link: var(--tl-accent-green);
+
+  /* Border color */
+  --bulma-border: var(--tl-border);
+
+}
+
+/* ==========================================================================
+   Base Styles - Force Dark Theme
+   ========================================================================== */
+
+html {
+  background-color: var(--tl-bg-base);
+}
+
+body {
+  background-color: var(--tl-bg-base);
+  color: var(--tl-text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, sans-serif;
+}
+
+/* ==========================================================================
+   Navbar
+   ========================================================================== */
+
+.navbar {
+  background-color: var(--tl-bg-base);
+  border-bottom: 1px solid var(--tl-border);
+}
+
+.navbar-item,
+.navbar-link {
+  color: var(--tl-text-primary);
+}
+
+.navbar-item:hover,
+.navbar-link:hover {
+  background-color: var(--tl-bg-elevated);
+  color: var(--tl-text-primary);
+}
+
+.navbar-brand strong {
+  font-size: 1.25rem;
+  color: var(--tl-accent-green);
+  letter-spacing: -0.02em;
+}
+
+.navbar-burger span {
+  background-color: var(--tl-text-primary);
+}
+
+/* ==========================================================================
+   Boxes / Cards - Elevated Surfaces
+   ========================================================================== */
+
+.box {
+  background-color: var(--tl-bg-elevated);
+  border-radius: 12px;
+  border: 1px solid var(--tl-border);
+  box-shadow: none;
+}
+
+.box:hover {
+  border-color: #3a3a3a;
+}
+
+/* ==========================================================================
+   Summary Cards
+   ========================================================================== */
+
+.dashboard-summary {
+  margin-bottom: 1.5rem;
+}
+
+.summary-card {
+  text-align: center;
+  padding: 1.5rem 1rem;
+  background-color: var(--tl-bg-elevated);
+  border: 1px solid var(--tl-border);
+  border-radius: 12px;
+  height: 100%;
+}
+
+.summary-card .heading {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--tl-text-secondary);
+  margin-bottom: 0.75rem;
+  font-weight: 500;
+}
+
+.summary-card .title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--tl-text-primary);
+  margin-bottom: 0.25rem;
+  letter-spacing: -0.02em;
+}
+
+.summary-card .subtitle {
+  font-size: 0.8rem;
+  color: var(--tl-text-muted);
+  margin-top: 0;
+}
+
+/* Highlight the main metric */
+.summary-card.is-featured {
+  border-color: var(--tl-accent-green);
+  border-width: 2px;
+}
+
+.summary-card.is-featured .title {
+  color: var(--tl-accent-green);
+}
+
+/* ==========================================================================
+   Typography
+   ========================================================================== */
+
+.title {
+  color: var(--tl-text-primary);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  color: var(--tl-text-secondary);
+}
+
+.label {
+  color: var(--tl-text-primary);
+  font-weight: 500;
+}
+
+/* Currency and numbers */
+.has-text-currency {
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+}
+
+.has-text-positive {
+  color: var(--tl-accent-green) !important;
+}
+
+.has-text-negative {
+  color: var(--tl-accent-red) !important;
+}
+
+/* ==========================================================================
+   Tables
+   ========================================================================== */
+
+.table {
+  background-color: transparent;
+  color: var(--tl-text-primary);
+}
+
+.table th {
+  color: var(--tl-text-secondary);
+  font-weight: 500;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--tl-border);
+  background-color: transparent;
+}
+
+.table td {
+  border-bottom: 1px solid var(--tl-border);
+  color: var(--tl-text-primary);
+}
+
+.table tr:hover td {
+  background-color: var(--tl-bg-surface);
+}
+
+.table.is-striped tbody tr:nth-child(even) td {
+  background-color: var(--tl-bg-surface);
+}
+
+.table.is-striped tbody tr:nth-child(even):hover td {
+  background-color: var(--tl-bg-hover);
+}
+
+
+.table tfoot th {
+  color: var(--tl-text-primary);
+  border-top: 2px solid var(--tl-border);
+  font-weight: 600;
+}
+
+.table td.has-text-right,
+.table th.has-text-right {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ==========================================================================
+   Forms
+   ========================================================================== */
+
+.input,
+.textarea,
+.select select {
+  background-color: var(--tl-bg-base);
+  border: 1px solid #3a3a3a;
+  color: var(--tl-text-primary);
+  border-radius: 8px;
+}
+
+.input:hover,
+.textarea:hover,
+.select select:hover {
+  border-color: #4a4a4a;
+}
+
+.input:focus,
+.textarea:focus,
+.select select:focus {
+  border-color: var(--tl-accent-green);
+  box-shadow: 0 0 0 2px rgba(74, 224, 135, 0.2);
+}
+
+.input::placeholder,
+.textarea::placeholder {
+  color: var(--tl-text-muted);
+}
+
+.select::after {
+  border-color: var(--tl-text-secondary);
+}
+
+/* ==========================================================================
+   Buttons
+   ========================================================================== */
+
+.button {
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.15s ease;
+}
+
+.button.is-primary {
+  background-color: var(--tl-accent-green);
+  border-color: var(--tl-accent-green);
+  color: #121212;
+}
+
+.button.is-primary:hover {
+  background-color: var(--tl-accent-green-dark);
+  border-color: var(--tl-accent-green-dark);
+}
+
+.button.is-primary.is-outlined {
+  background-color: transparent;
+  border-color: var(--tl-accent-green);
+  color: var(--tl-accent-green);
+}
+
+.button.is-primary.is-outlined:hover {
+  background-color: var(--tl-accent-green);
+  color: #121212;
+}
+
+.button.is-light {
+  background-color: var(--tl-bg-surface);
+  border-color: var(--tl-border);
+  color: var(--tl-text-primary);
+}
+
+.button.is-light:hover {
+  background-color: var(--tl-bg-hover);
+  border-color: var(--tl-border);
+}
+
+.button.is-link {
+  background-color: var(--tl-bg-surface);
+  color: var(--tl-accent-green);
+}
+
+.button.is-link:hover {
+  background-color: var(--tl-bg-hover);
+}
+
+/* ==========================================================================
+   Notifications / Flash Messages
+   ========================================================================== */
+
+.notification {
+  background-color: var(--tl-bg-elevated);
+  border-radius: 8px;
+  transition:
+    opacity 1s ease-in-out,
+    max-height 1s ease-in-out,
+    margin 1s ease-in-out,
+    padding 1s ease-in-out;
+  overflow: hidden;
+}
+
+.notification.is-success {
+  background-color: rgba(74, 224, 135, 0.15);
+  color: var(--tl-accent-green);
+}
+
+.notification.is-info {
+  background-color: rgba(96, 165, 250, 0.15);
+  color: #93c5fd;
+}
+
+.notification.is-warning {
+  background-color: #fffbeb;
+  color: #92400e;
+}
+
+.notification.is-danger {
+  background-color: rgba(224, 84, 84, 0.15);
+  color: var(--tl-accent-red);
+}
+
+.notification.fade-out {
+  opacity: 0;
+  max-height: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.notification .delete {
+  background-color: var(--tl-bg-surface);
+}
+
+.notification .delete::before,
+.notification .delete::after {
+  background-color: var(--tl-text-secondary);
+}
+
+/* ==========================================================================
+   Tabs (Settings)
+   ========================================================================== */
+
+.tabs a {
+  color: var(--tl-text-secondary);
+  border-bottom-color: var(--tl-border);
+}
+
+.tabs a:hover {
+  color: var(--tl-text-primary);
+  border-bottom-color: var(--tl-text-secondary);
+}
+
+.tabs li.is-active a {
+  color: var(--tl-accent-green);
+  border-bottom-color: var(--tl-accent-green);
+}
+
+/* ==========================================================================
+   Horizontal Rule
+   ========================================================================== */
+
+hr {
+  background-color: var(--tl-border);
+  height: 1px;
+}
+
+/* ==========================================================================
+   Links
+   ========================================================================== */
+
+a {
+  color: var(--tl-accent-green);
+}
+
+a:hover {
+  color: var(--tl-accent-green-dark);
+}
+
+/* Muted links for secondary actions */
+.has-text-centered a {
+  color: var(--tl-text-secondary);
+}
+
+.has-text-centered a:hover {
+  color: var(--tl-accent-green);
+}
+
+/* ==========================================================================
+   Section Spacing
+   ========================================================================== */
+
+.section {
+  padding: 1.5rem 0;
+}
+
+/* ==========================================================================
+   Charts
+   ========================================================================== */
+
+/* Ensure chart containers have proper background */
+[data-controller="chart"],
+[data-controller="income-chart"] {
+  border-radius: 8px;
+}
+
+/* ==========================================================================
+   Container Adjustments
+   ========================================================================== */
+
+.container {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+/* ==========================================================================
+   Level Component
+   ========================================================================== */
+
+.level-item .title,
+.level-item .heading {
+  color: var(--tl-text-primary);
+}
+
+/* ==========================================================================
+   Tags / Badges
+   ========================================================================== */
+
+.tag {
+  background-color: var(--tl-bg-surface);
+  color: var(--tl-text-secondary);
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
+.tag.is-primary {
+  background-color: rgba(74, 224, 135, 0.2);
+  color: var(--tl-accent-green);
+}
+
+/* ==========================================================================
+   Dropdown
+   ========================================================================== */
+
+.dropdown-content {
+  background-color: var(--tl-bg-elevated);
+  border: 1px solid var(--tl-border);
+  border-radius: 8px;
+}
+
+.dropdown-item {
+  color: var(--tl-text-primary);
+}
+
+.dropdown-item:hover {
+  background-color: var(--tl-bg-surface);
+  color: var(--tl-text-primary);
+}
+
+/* ==========================================================================
+   Modal
+   ========================================================================== */
+
+.modal-card {
+  background-color: var(--tl-bg-elevated);
+  border-radius: 12px;
+}
+
+.modal-card-head,
+.modal-card-foot {
+  background-color: var(--tl-bg-surface);
+  border-color: var(--tl-border);
+}
+
+.modal-card-title {
+  color: var(--tl-text-primary);
+}
+
+.modal-card-body {
+  background-color: var(--tl-bg-elevated);
+  color: var(--tl-text-primary);
+}
+
+/* ==========================================================================
+   Member Cards (Household Settings)
+   ========================================================================== */
+
+.member-card {
+  background-color: var(--tl-bg-surface);
+  border: 1px solid var(--tl-border);
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  overflow: hidden;
+}
+
+.member-card:last-child {
+  margin-bottom: 0;
+}
+
+.member-card-header {
+  background-color: var(--tl-bg-hover);
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--tl-border);
+}
+
+.member-card-header .title {
+  color: var(--tl-text-primary);
+  margin-bottom: 0;
+}
+
+.member-card-body {
+  padding: 1rem;
+}
+
+.member-card-body .columns {
+  margin-bottom: 0;
+}
+
+.member-card-body .columns:last-child {
+  margin-bottom: -0.75rem;
+}
+
+/* Panel heading - match member-card-header style */
+.panel-heading {
+  background-color: var(--tl-bg-hover);
+  color: var(--tl-text-primary);
+}
+
+/* ==========================================================================
+   Settings Page Improvements
+   ========================================================================== */
+
+.box .title.is-5 {
+  margin-bottom: 1rem;
+}
+
+.box .subtitle.is-6 {
+  margin-bottom: 1rem;
+  color: var(--tl-text-secondary);
+}
+
+/* ==========================================================================
+   Year Badge (calculated year display)
+   ========================================================================== */
+
+.year-badge {
+  background-color: var(--tl-bg-hover) !important;
+  border-color: #3a3a3a !important;
+  color: var(--tl-accent-green) !important;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  min-width: 60px;
+  justify-content: center;
+}
+
+/* Fix for has-addons input border radius */
+.field.has-addons .control:not(:last-child) .input {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.field.has-addons .control:last-child .button {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+/* ==========================================================================
+   Checkbox Styling
+   ========================================================================== */
+
+.checkbox {
+  color: var(--tl-text-primary);
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.checkbox input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--tl-accent-green);
+  cursor: pointer;
+}
+
+/* ==========================================================================
+   Empty State Text
+   ========================================================================== */
+
+.has-text-grey {
+  color: var(--tl-text-muted) !important;
+}
+
+/* ==========================================================================
+   Tooltips
+   ==========================================================================
+   Base tooltip styles for any element with data-tooltip attribute.
+   Use .has-tooltip for inline text, .info-tooltip for info icons.
+   ========================================================================== */
+
+/* Base tooltip popup - applies to any element with data-tooltip */
+[data-tooltip] {
+  position: relative;
+  cursor: help;
+}
+
+[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: 250px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--tl-text-primary);
+  background-color: var(--tl-bg-elevated);
+  border: 1px solid var(--tl-border);
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.15s ease, visibility 0.15s ease;
+  z-index: 100;
+  pointer-events: none;
+  white-space: pre-line;
+  text-align: left;
+  text-decoration: none;
+}
+
+[data-tooltip]:hover::after {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Inline text tooltip - adds underline indicator */
+.has-tooltip {
+  text-decoration: underline dotted;
+  text-underline-offset: 2px;
+}
+
+/* Info icon tooltip - circular icon with "?" or "i" */
+.info-tooltip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  margin-left: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--tl-text-muted);
+  background-color: var(--tl-bg-surface);
+  border: 1px solid var(--tl-border);
+  border-radius: 50%;
+  vertical-align: middle;
+  transition: all 0.15s ease;
+}
+
+.info-tooltip:hover {
+  color: var(--tl-accent-green);
+  border-color: var(--tl-accent-green);
+}
+
+/* Arrow for info-tooltip */
+.info-tooltip::before {
+  content: '';
+  position: absolute;
+  bottom: calc(100% + 2px);
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: var(--tl-border);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.15s ease, visibility 0.15s ease;
+  z-index: 101;
+}
+
+.info-tooltip:hover::before {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ==========================================================================
+   Projection Details Table
+   ========================================================================== */
+
+#projection_details_table {
+  font-size: 0.85rem;
+}
+
+#projection_details_table th,
+#projection_details_table td {
+  white-space: nowrap;
+  padding: 0.5rem 0.75rem;
+}
+
+#projection_details_table thead th {
+  position: sticky;
+  top: 0;
+  background-color: var(--tl-bg-elevated);
+  z-index: 10;
+}
+
+/* Sticky first column (Year) */
+#projection_details_table .is-sticky-col {
+  position: sticky;
+  left: 0;
+  background-color: var(--tl-bg-elevated);
+  z-index: 5;
+}
+
+#projection_details_table thead .is-sticky-col {
+  z-index: 15;
+}
+
+#projection_details_table tbody tr:nth-child(even) .is-sticky-col {
+  background-color: var(--tl-bg-surface);
+}
+
+#projection_details_table tbody tr:hover .is-sticky-col {
+  background-color: var(--tl-bg-hover);
+}
+
+/* Column group borders */
+#projection_details_table .group-border {
+  border-left: 2px solid var(--tl-accent-green);
+}
+
+#projection_details_table .subgroup-border {
+  border-left: 1px solid #dbdbdb;
+}
+
+/* Tabs flush with box */
+#projection_details_tabs {
+  margin-bottom: 0 !important;
+}
+
+/* ==========================================================================
+   /try Wizard — sentence-style inputs
+   ========================================================================== */
+
+.try-step {
+  margin-bottom: 1rem;
+}
+
+.try-sentence {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  font-size: 1.15rem;
+  color: var(--tl-text-primary);
+}
+
+.try-input {
+  border: none;
+  border-bottom: 2px solid var(--tl-text-secondary);
+  background: transparent;
+  font-size: 1.5rem;
+  font-weight: 700;
+  width: 100px;
+  text-align: center;
+  padding: 0 0.2rem 0.1rem;
+  outline: none;
+  color: var(--tl-accent-green);
+  transition: border-color 0.15s ease;
+  -moz-appearance: textfield;
+}
+
+.try-input::-webkit-outer-spin-button,
+.try-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.try-input:focus {
+  border-bottom-color: var(--tl-accent-green);
+}
+
+.try-input--wide   { width: 150px; }
+.try-input--narrow { width: 65px; }
+
+.try-hint {
+  font-size: 0.8rem;
+  color: var(--tl-text-muted);
+  width: 100%;
+  margin-top: 0.15rem;
+  padding-left: 0.1rem;
+}
+
+.try-assumptions-row {
+  margin-top: 0.25rem;
+}
+
+.try-assumptions-row .try-sentence {
+  font-size: 0.95rem;
+  opacity: 0.8;
+}
+
+.try-assumptions-row .try-input {
+  font-size: 1.1rem;
+  width: 80px;
+}
+
+.try-divider {
+  border: none;
+  border-top: 1px solid var(--tl-bg-surface);
+  margin: 1.25rem 0;
+}
+
+.try-step1-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Dashboard input panel: collapsible sections with one-line summaries */
+.workspace-section + .workspace-section {
+  border-top: 1px solid var(--bulma-border-weak);
+}
+
+.workspace-section-summary {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1.25rem;
+  cursor: pointer;
+  list-style: none;
+}
+
+.workspace-section-summary::-webkit-details-marker {
+  display: none;
+}
+
+.workspace-section-summary > span:first-child {
+  white-space: nowrap;
+}
+
+/* Push the summary's detail text to the right, after the chevron and title. */
+.workspace-section-summary > span:last-child {
+  margin-left: auto;
+  text-align: right;
+}
+
+/* Chevron: points right when collapsed, down when open. */
+.workspace-section-summary::before {
+  content: "";
+  flex: none;
+  width: 0.45em;
+  height: 0.45em;
+  margin-right: 0.125rem;
+  border-right: 2px solid var(--bulma-text-weak);
+  border-bottom: 2px solid var(--bulma-text-weak);
+  transform: rotate(-45deg);
+}
+
+.workspace-section[open] > .workspace-section-summary::before {
+  transform: rotate(45deg);
+}
+
+/* The details-content wrapper isn't covered by Bulma's box-sizing reset; without
+   this, everything inside a section sizes as content-box and overflows. */
+.workspace-section::details-content {
+  box-sizing: inherit;
+}
+
+/* Slide sections open and closed. Browsers without interpolate-size
+   (Firefox, Safari for now) just open instantly. */
+@media (prefers-reduced-motion: no-preference) {
+  .workspace-section-summary::before {
+    transition: transform 0.2s ease;
+  }
+
+  @supports (interpolate-size: allow-keywords) {
+    .workspace-section {
+      interpolate-size: allow-keywords;
+    }
+
+    .workspace-section::details-content {
+      block-size: 0;
+      overflow: hidden;
+      transition: block-size 0.25s ease, content-visibility 0.25s allow-discrete;
+    }
+
+    .workspace-section[open]::details-content {
+      block-size: auto;
+    }
+  }
+}
+
+/* Set by the disclosure controller while restoring a saved state after a
+   refresh, so sections don't animate on every save. */
+.workspace-section.is-instant > .workspace-section-summary::before,
+.workspace-section.is-instant::details-content {
+  transition: none;
+}
+
+.workspace-section-body {
+  padding: 0 1.25rem 1rem;
+}
+
+/* Add and edit forms in the input panel: small controls to match the panel's
+   text, and fields that shrink to fit its narrow column. */
+.workspace-form .label,
+.workspace-form .input,
+.workspace-form .select,
+.workspace-form .button,
+.workspace-form .help,
+.workspace-form .checkbox,
+.workspace-form .textarea,
+.workspace-form .heading,
+.workspace-form .notification {
+  font-size: var(--bulma-size-small);
+}
+
+.workspace-form .columns {
+  --bulma-column-gap: 0.5rem;
+  margin-bottom: 0;
+}
+
+.workspace-form .column,
+.workspace-form .control {
+  min-width: 0;
+}
+
+/* A field alone on its row gets the full panel width rather than a fraction. */
+.workspace-form .column:only-child {
+  flex: 1 1 0;
+  width: auto;
+}
+
+.workspace-form .table {
+  font-size: var(--bulma-size-small);
+}
+
+.workspace-form .field.is-grouped {
+  flex-wrap: wrap;
+  row-gap: 0.5rem;
+}
+
+/* Each record row is a Turbo Frame so its edit form replaces it in place. */
+.workspace-section-body turbo-frame {
+  display: block;
+}
+
+.workspace-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+  border-top: 1px solid var(--bulma-border-weak);
+}

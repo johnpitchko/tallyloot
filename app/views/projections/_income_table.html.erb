@@ -1,0 +1,96 @@
+<div data-controller="dollar-mode">
+  <div class="is-flex is-justify-content-flex-end mb-3">
+    <div class="field has-addons">
+      <p class="control">
+        <button class="button is-small" data-dollar-mode-target="nominalBtn" data-action="click->dollar-mode#showNominal">Future $</button>
+      </p>
+      <p class="control">
+        <button class="button is-small" data-dollar-mode-target="realBtn" data-action="click->dollar-mode#showReal">Today's $</button>
+      </p>
+    </div>
+  </div>
+  <div class="table-container">
+    <table class="table is-striped is-hoverable is-fullwidth is-narrow" id="projection_details_table">
+      <thead>
+        <tr>
+          <th rowspan="2" class="is-sticky-col">Year</th>
+          <% @household.users.each do |user| %>
+            <th rowspan="2" class="has-text-centered"><%= user.name %><br>Age</th>
+          <% end %>
+          <% if @household.retirement_income_goal.to_i > 0 %>
+            <th rowspan="2" class="has-text-right group-border">Income Goal</th>
+          <% end %>
+          <th colspan="4" class="has-text-centered group-border">Sources</th>
+          <th class="has-text-centered group-border">Total</th>
+          <th class="has-text-centered group-border">
+            Est. Tax
+            <span class="info-tooltip" data-tooltip="Estimated federal income tax based on 2024 brackets, indexed for inflation. Hover each cell for breakdown. Does not include provincial tax, deductions, or credits beyond the basic personal amount.">?</span>
+          </th>
+          <th class="has-text-centered group-border">Net Income</th>
+        </tr>
+        <tr>
+          <th class="has-text-right group-border">Benefits</th>
+          <th class="has-text-right">Pensions</th>
+          <th class="has-text-right">Employment</th>
+          <th class="has-text-right">Withdrawals</th>
+          <th class="has-text-right group-border">Income</th>
+          <th class="has-text-right group-border">Amount</th>
+          <th class="has-text-right group-border">After Tax</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @periods.each do |period| %>
+          <tr id="projection_income_row_<%= period.year %>">
+            <td class="is-sticky-col"><strong><%= period.year %></strong></td>
+            <% @household.users.each do |user| %>
+              <td class="has-text-centered"><%= user.age_in_year(period.year) %></td>
+            <% end %>
+            <% if @household.retirement_income_goal.to_i > 0 %>
+              <td class="has-text-right group-border">
+                <% if period.retired? %>
+                  <span data-dollar-mode-target="nominalValue"><%= number_to_currency(period.nominal_income_goal, precision: 0) %></span>
+                  <span data-dollar-mode-target="realValue" class="is-hidden"><%= number_to_currency(period.real_income_goal, precision: 0) %></span>
+                <% else %>
+                  —
+                <% end %>
+              </td>
+            <% end %>
+            <% benefits_tip = benefits_tooltip(period) %>
+            <td class="<%= income_source_td_class(benefits_tip, group_border: true) %>" <%= tooltip_data(benefits_tip) %>>
+              <span data-dollar-mode-target="nominalValue"><%= number_to_currency(period.benefit_income, precision: 0) %></span>
+              <span data-dollar-mode-target="realValue" class="is-hidden"><%= number_to_currency(period.deflate(period.benefit_income), precision: 0) %></span>
+            </td>
+            <% pensions_tip = pensions_tooltip(period) %>
+            <td class="<%= income_source_td_class(pensions_tip) %>" <%= tooltip_data(pensions_tip) %>>
+              <span data-dollar-mode-target="nominalValue"><%= number_to_currency(period.pension_income, precision: 0) %></span>
+              <span data-dollar-mode-target="realValue" class="is-hidden"><%= number_to_currency(period.deflate(period.pension_income), precision: 0) %></span>
+            </td>
+            <% employment_tip = employment_tooltip(period) %>
+            <td class="<%= income_source_td_class(employment_tip) %>" <%= tooltip_data(employment_tip) %>>
+              <span data-dollar-mode-target="nominalValue"><%= number_to_currency(period.employment_income, precision: 0) %></span>
+              <span data-dollar-mode-target="realValue" class="is-hidden"><%= number_to_currency(period.deflate(period.employment_income), precision: 0) %></span>
+            </td>
+            <% withdrawals_tip = withdrawals_tooltip(period) %>
+            <td class="<%= income_source_td_class(withdrawals_tip) %>" <%= tooltip_data(withdrawals_tip) %>>
+              <span data-dollar-mode-target="nominalValue"><%= number_to_currency(period.withdrawal_amount, precision: 0) %></span>
+              <span data-dollar-mode-target="realValue" class="is-hidden"><%= number_to_currency(period.deflate(period.withdrawal_amount), precision: 0) %></span>
+            </td>
+            <td class="has-text-right group-border">
+              <span data-dollar-mode-target="nominalValue"><%= number_to_currency(period.income_amount, precision: 0) %></span>
+              <span data-dollar-mode-target="realValue" class="is-hidden"><%= number_to_currency(period.deflate(period.income_amount), precision: 0) %></span>
+            </td>
+            <% tax_tip = tax_tooltip(period) %>
+            <td class="<%= income_source_td_class(tax_tip, group_border: true) %>" <%= tooltip_data(tax_tip) %>>
+              <span data-dollar-mode-target="nominalValue"><%= number_to_currency(period.tax_estimate.estimated_tax, precision: 0) %></span>
+              <span data-dollar-mode-target="realValue" class="is-hidden"><%= number_to_currency(period.deflate(period.tax_estimate.estimated_tax), precision: 0) %></span>
+            </td>
+            <td class="has-text-right group-border">
+              <span data-dollar-mode-target="nominalValue"><%= number_to_currency(period.after_tax_income, precision: 0) %></span>
+              <span data-dollar-mode-target="realValue" class="is-hidden"><%= number_to_currency(period.deflate(period.after_tax_income), precision: 0) %></span>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,19 @@
+<%= render "shared/settings_tabs" %>
+
+<section class="section">
+  <h1 class="title is-3">Portfolio Settings</h1>
+  <p class="subtitle is-6">Configure your investment strategy and manage accounts</p>
+  <!-- Investment Strategy Section -->
+  <%= form_for @household.portfolio, url: portfolio_path, method: :patch do |form| %>
+    <div class="box mb-5" id="portfolio_settings">
+      <h2 class="title is-5">Investment Strategy</h2>
+      <%= render "fields", form: form %>
+
+      <div class="field mt-4">
+        <div class="control">
+          <%= form.submit "Save", class: "button is-primary is-small" %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</section>

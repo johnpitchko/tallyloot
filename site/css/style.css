@@ -1,0 +1,384 @@
+/* Tallyloot Marketing Site - Dark Theme Styles */
+
+:root {
+  /* Background colors */
+  --bg-base: #121212;
+  --bg-elevated: #1e1e1e;
+  --bg-surface: #2a2a2a;
+
+  /* Accent colors */
+  --primary: #4ae087;
+  --primary-hover: #3bc96f;
+
+  /* Text colors */
+  --text-primary: #f5f5f5;
+  --text-secondary: #a0a0a0;
+
+  /* Border radius */
+  --radius-card: 12px;
+  --radius-button: 8px;
+}
+
+/* Base styles */
+html {
+  background-color: var(--bg-base);
+}
+
+body {
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  min-height: 100vh;
+}
+
+/* Override Bulma defaults for dark theme */
+.title,
+.subtitle {
+  color: var(--text-primary) !important;
+}
+
+.subtitle {
+  color: var(--text-secondary) !important;
+}
+
+/* Hero section */
+.hero.is-dark-theme {
+  background: linear-gradient(135deg, var(--bg-base) 0%, var(--bg-elevated) 100%);
+}
+
+.hero.is-dark-theme .title {
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.hero.is-dark-theme .subtitle {
+  font-weight: 400;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Primary button */
+.button.is-primary-cta {
+  background-color: var(--primary);
+  color: var(--bg-base);
+  border: none;
+  border-radius: var(--radius-button);
+  font-weight: 600;
+  padding: 1.25em 2em;
+  font-size: 1.1rem;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.button.is-primary-cta:hover {
+  background-color: var(--primary-hover);
+  color: var(--bg-base);
+  transform: translateY(-2px);
+}
+
+.button.is-primary-cta:focus {
+  box-shadow: 0 0 0 3px rgba(74, 224, 135, 0.3);
+}
+
+/* Feature cards */
+.feature-card {
+  background-color: var(--bg-elevated);
+  border-radius: var(--radius-card);
+  padding: 2rem;
+  height: 100%;
+  border: 1px solid var(--bg-surface);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--primary);
+}
+
+.feature-card .icon-wrapper {
+  width: 56px;
+  height: 56px;
+  background-color: rgba(74, 224, 135, 0.1);
+  border-radius: var(--radius-button);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.feature-card .icon-wrapper svg {
+  width: 28px;
+  height: 28px;
+  color: var(--primary);
+}
+
+.feature-card .feature-title {
+  color: var(--text-primary);
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.feature-card .feature-description {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+/* Sections */
+.section.is-dark {
+  background-color: var(--bg-base);
+}
+
+.section.is-dark-elevated {
+  background-color: var(--bg-elevated);
+}
+
+.section-title {
+  color: var(--text-primary);
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.section-subtitle {
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 3rem;
+}
+
+/* How it works steps */
+.step-item {
+  text-align: center;
+  padding: 1.5rem;
+}
+
+.step-number {
+  width: 48px;
+  height: 48px;
+  background-color: var(--primary);
+  color: var(--bg-base);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.25rem;
+  margin: 0 auto 1rem;
+}
+
+.step-title {
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.step-description {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+/* CTA section */
+.cta-section {
+  background: linear-gradient(135deg, var(--bg-elevated) 0%, var(--bg-surface) 100%);
+  border-radius: var(--radius-card);
+  padding: 4rem 2rem;
+  margin: 2rem 0;
+}
+
+.cta-section .title {
+  margin-bottom: 1rem;
+}
+
+.cta-section .subtitle {
+  margin-bottom: 2rem;
+}
+
+/* Footer */
+.footer.is-dark {
+  background-color: var(--bg-elevated);
+  color: var(--text-secondary);
+  padding: 2rem 1.5rem;
+}
+
+.footer.is-dark a {
+  color: var(--text-secondary);
+  transition: color 0.2s ease;
+}
+
+.footer.is-dark a:hover {
+  color: var(--primary);
+}
+
+.footer-links {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+/* Navbar */
+.navbar.is-dark {
+  background-color: var(--bg-elevated);
+  border-bottom: 1px solid var(--bg-surface);
+}
+
+.navbar.is-dark .navbar-item {
+  color: var(--text-secondary);
+  transition: color 0.2s ease;
+}
+
+.navbar.is-dark .navbar-item:hover {
+  background-color: transparent;
+  color: var(--text-primary);
+}
+
+.navbar.is-dark .navbar-item.button.is-primary-cta {
+  color: var(--bg-base);
+  background-color: var(--primary);
+}
+
+.navbar.is-dark .navbar-item.button.is-primary-cta:hover {
+  color: var(--bg-base);
+  background-color: var(--primary-hover);
+}
+
+/* Logo styling */
+.logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.logo-icon {
+  color: var(--primary);
+}
+
+/* Disclaimer content */
+.disclaimer-content h2 {
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.disclaimer-content h2:first-child {
+  margin-top: 0;
+}
+
+.disclaimer-content ul {
+  margin-left: 1.5rem;
+  color: var(--text-secondary);
+}
+
+.disclaimer-content li {
+  margin-bottom: 0.5rem;
+}
+
+.coming-soon-badge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background-color: var(--bg-surface);
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.button.is-coming-soon {
+  background-color: var(--bg-surface);
+  color: var(--text-secondary);
+  border: none;
+  border-radius: var(--radius-button);
+  font-weight: 600;
+  padding: 1.25em 2em;
+  font-size: 1rem;
+  cursor: not-allowed;
+}
+
+
+.button.is-secondary-cta {
+  background-color: transparent;
+  color: var(--primary);
+  border: 2px solid var(--primary);
+  border-radius: var(--radius-button);
+  font-weight: 600;
+  padding: 1.25em 2em;
+  font-size: 1.1rem;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.button.is-secondary-cta:hover {
+  color: var(--primary-hover);
+  border-color: var(--primary-hover);
+  transform: translateY(-2px);
+}
+
+#get-started a {
+  color: var(--primary);
+}
+
+#get-started strong {
+  color: var(--text-primary);
+}
+
+/* Nav: the GitHub button sits in the brand bar so it shows at every width */
+#navbar .navbar-brand {
+  flex-grow: 1;
+  align-items: center;
+}
+
+#navbar #nav-github {
+  padding: 0.5em 1em;
+  font-size: 0.9rem;
+  margin-right: 0.75rem;
+}
+
+/* Install command */
+.install-command {
+  display: inline-block;
+  max-width: 100%;
+  overflow-x: auto;
+  text-align: left;
+  background: var(--bg-base);
+  color: var(--text-primary);
+  border: 1px solid var(--bg-surface);
+  border-radius: var(--radius-button);
+  padding: 1.25rem 1.5rem;
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 768px) {
+  .hero-body {
+    padding: 4rem 1.5rem;
+  }
+
+  .feature-card {
+    margin-bottom: 1.5rem;
+  }
+
+  .cta-section {
+    padding: 3rem 1.5rem;
+  }
+
+  .install-command {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    padding: 1rem;
+    font-size: 0.8rem;
+  }
+
+  .footer-links {
+    flex-direction: column;
+    gap: 1rem;
+  }
+}

@@ -1,0 +1,46 @@
+---
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+# == Schema Information
+#
+# Table name: allocations
+#
+#  id                 :integer          not null, primary key
+#  avg_nominal_return :decimal(5, 4)    default(0.0), not null
+#  description        :text
+#  equity_pct         :decimal(5, 4)    not null
+#  fixed_income_pct   :decimal(5, 4)    not null
+#  name               :string
+#  std_dev            :decimal(5, 4)    default(0.0), not null
+#  created_at         :datetime         not null
+#  updated_at         :datetime         not null
+#
+very_aggressive:
+  name: Very Aggressive
+  equity_pct: 1.0
+  fixed_income_pct: 0.0
+  avg_nominal_return: 0.08
+  description: 100% equities. Maximum growth.
+aggressive:
+  name: Aggressive
+  equity_pct: 0.85
+  fixed_income_pct: 0.15
+  avg_nominal_return: 0.075
+  description: 85/15 portfolio.
+balanced:
+  name: Balanced
+  equity_pct: 0.6
+  fixed_income_pct: 0.4
+  avg_nominal_return: 0.065
+  description: 60/40 balanced.
+conservative:
+  name: Conservative
+  equity_pct: 0.4
+  fixed_income_pct: 0.6
+  avg_nominal_return: 0.055
+  description: 40/60 portfolio
+very_conservative:
+  name: Very Conservative
+  equity_pct: 0.0
+  fixed_income_pct: 1.0
+  avg_nominal_return: 0.04
+  description: 100% fixed income

@@ -1,0 +1,21 @@
+<section class="section" id="accounts">
+  <h1 class="title is-3">Accounts</h1>
+  <p class="subtitle is-6">Manage your investment and savings account details</p>
+
+  <% @household.users.each do |user| %>
+    <div class="panel" id="user_<%= user.id %>_accounts">
+      <div class="panel-heading">
+        <h3><%= user.name %>'s Accounts</h3>
+      </div>
+
+      <% user.accounts.each do |account| %>
+        <%= link_to edit_user_account_path(user, account), class: "panel-block is-justify-content-space-between", id: "account_#{account.id}" do %>
+          <%= render "account", account: account %>
+        <% end %>
+      <% end %>
+      <div class="panel-block">
+        <%= link_to "Add Account", new_user_account_path(user), class: "button is-primary is-outlined is-small" %>
+      </div>
+    </div>
+  <% end %>
+</section>

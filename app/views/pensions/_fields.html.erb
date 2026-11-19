@@ -1,0 +1,108 @@
+<div class="columns">
+  <div class="column is-half">
+    <div class="field">
+      <label class="label">Name</label>
+      <div class="control">
+        <%= form.text_field :name, class: "input", placeholder: "Pension name" %>
+      </div>
+    </div>
+  </div>
+  <div class="column is-half">
+    <div class="field">
+      <label class="label">Annual Amount</label>
+      <div class="field has-addons">
+        <div class="control">
+          <span class="button is-static">$</span>
+        </div>
+        <div class="control is-expanded">
+          <%= form.text_field :annual_amount, class: "input", inputmode: "numeric", placeholder: "0",
+              data: { controller: "currency-input", action: "focus->currency-input#focus blur->currency-input#blur" } %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="columns">
+  <div class="column is-half">
+    <div class="field">
+      <label class="label">Start Age</label>
+      <div class="control">
+        <%= form.number_field :start_age, class: "input", step: 1, placeholder: "Start age" %>
+      </div>
+    </div>
+  </div>
+  <div class="column is-half">
+    <div class="field">
+      <label class="label">Inflation Indexed</label>
+      <div class="control">
+        <label class="checkbox">
+          <%= form.check_box :inflation_indexed %>
+          Pension amount adjusts for inflation
+        </label>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="field">
+  <label class="label">Description</label>
+  <div class="control">
+    <%= form.text_area :description, class: "textarea", placeholder: "Optional description", rows: 2 %>
+  </div>
+</div>
+
+<hr>
+
+<p class="heading mb-3">
+  Actuarial Adjustments
+  <span class="info-tooltip" data-tooltip="Most DB pensions pay a reduced amount if you collect before your plan's normal retirement age, and may pay more if you delay. Leave these blank if your pension pays the same amount regardless of when you start.">?</span>
+</p>
+
+<div class="columns">
+  <div class="column is-one-third">
+    <div class="field">
+      <label class="label is-small">Normal Retirement Age</label>
+      <div class="control">
+        <%= form.number_field :normal_retirement_age, class: "input", step: 1, min: 50, max: 75, placeholder: "65" %>
+      </div>
+      <p class="help">Age at which full benefit is paid. Most plans use 65.</p>
+    </div>
+  </div>
+  <div class="column is-one-third">
+    <div class="field">
+      <label class="label is-small">
+        Early Reduction Rate
+        <span class="info-tooltip" data-tooltip="Percentage reduction per year you collect before the normal retirement age. A common rate for Canadian DB pensions is 3% per year. Check your pension statement for your plan's exact rate.">?</span>
+      </label>
+      <div class="field has-addons">
+        <div class="control is-expanded">
+          <%= form.number_field :early_reduction_rate_pct, class: "input", step: 0.1, min: 0, max: 10,
+              placeholder: "e.g. 3" %>
+        </div>
+        <div class="control">
+          <span class="button is-static">% / yr</span>
+        </div>
+      </div>
+      <p class="help">Leave blank if no early reduction applies.</p>
+    </div>
+  </div>
+  <div class="column is-one-third">
+    <div class="field">
+      <label class="label is-small">
+        Late Increase Rate
+        <span class="info-tooltip" data-tooltip="Percentage increase per year you delay collection past the normal retirement age. Many DB plans do not offer a late increase (you simply forgo missed payments). Check your pension statement.">?</span>
+      </label>
+      <div class="field has-addons">
+        <div class="control is-expanded">
+          <%= form.number_field :late_increase_rate_pct, class: "input", step: 0.1, min: 0, max: 10,
+              placeholder: "e.g. 0" %>
+        </div>
+        <div class="control">
+          <span class="button is-static">% / yr</span>
+        </div>
+      </div>
+      <p class="help">Leave blank if no late increase applies.</p>
+    </div>
+  </div>
+</div>

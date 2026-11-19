@@ -1,0 +1,55 @@
+<div class="columns">
+  <div class="column">
+    <div class="field">
+      <label class="label">
+        Label
+        <span class="info-tooltip" data-tooltip="A short description of the work, e.g. &quot;Part-time consulting&quot; or &quot;Contract work&quot;.">?</span>
+      </label>
+      <div class="control">
+        <%= form.text_field :label, class: "input", placeholder: "e.g. Part-time consulting" %>
+      </div>
+    </div>
+  </div>
+  <div class="column">
+    <div class="field">
+      <label class="label">
+        Annual Income
+        <span class="info-tooltip" data-tooltip="Expected gross income per year in today's dollars. Enter 0 if you do not plan to work after retiring.">?</span>
+      </label>
+      <div class="field has-addons">
+        <div class="control">
+          <span class="button is-static">$</span>
+        </div>
+        <div class="control is-expanded">
+          <%= form.text_field :annual_income, class: "input", inputmode: "numeric", placeholder: "0",
+              data: { controller: "currency-input", action: "focus->currency-input#focus blur->currency-input#blur" } %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="columns">
+  <div class="column is-half">
+    <div class="field">
+      <label class="label">
+        Start Age
+        <span class="info-tooltip" data-tooltip="Age at which you expect to begin this post-retirement work. Typically equal to or shortly after your retirement age.">?</span>
+      </label>
+      <div class="control">
+        <%= form.number_field :start_age, class: "input", step: 1, placeholder: "e.g. 65", min: 0 %>
+      </div>
+    </div>
+  </div>
+  <div class="column is-half">
+    <div class="field">
+      <label class="label">
+        End Age
+        <span class="info-tooltip" data-tooltip="Age at which you expect to fully stop working.">?</span>
+      </label>
+      <div class="control">
+        <%= form.number_field :end_age, class: "input", step: 1, placeholder: "e.g. 70", min: 0 %>
+      </div>
+    </div>
+  </div>
+</div>

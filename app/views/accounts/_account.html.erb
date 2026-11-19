@@ -1,0 +1,11 @@
+<span>
+  <span class="account-name"><%= account.name %></span>
+  <br>
+  <span class="is-size-7"><%= account.type_name %></span>
+</span>
+<span class="has-text-right">
+  <span class="account-balance"><%= number_to_currency account.balance, precision: 0 %></span>
+  <br>
+  <span class="is-size-7">Annual contribution:
+    <%= number_to_currency account.contribution, precision: 0 %></span>
+</span>

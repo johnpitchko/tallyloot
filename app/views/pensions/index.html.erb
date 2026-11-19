@@ -1,0 +1,21 @@
+<section class="section" id="pensions">
+  <h1 class="title is-3">Pensions</h1>
+  <p class="subtitle is-6">Manage your defined benefit pensions and other retirement income</p>
+
+  <% @household.users.each do |user| %>
+    <div class="panel" id="user_<%= user.id %>_pensions">
+      <div class="panel-heading">
+        <h3><%= user.name %>'s Pensions</h3>
+      </div>
+
+      <% user.pensions.each do |pension| %>
+        <%= link_to edit_user_pension_path(user, pension), class: "panel-block is-justify-content-space-between", id: "pension_#{pension.id}" do %>
+          <%= render "pension", pension: pension %>
+        <% end %>
+      <% end %>
+      <div class="panel-block">
+        <%= link_to "Add Pension", new_user_pension_path(user), class: "button is-primary is-outlined is-small" %>
+      </div>
+    </div>
+  <% end %>
+</section>
