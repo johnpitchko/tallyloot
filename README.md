@@ -11,11 +11,20 @@ Tallyloot is not financial advice.
 ## Running with Docker
 
 ```bash
-docker build -t tallyloot .
-docker run -d -p 3000:80 -v tallyloot:/rails/storage --name tallyloot tallyloot
+docker run -d -p 3000:80 -v tallyloot:/rails/storage --name tallyloot ghcr.io/johnpitchko/tallyloot
 ```
 
-Then open http://localhost:3000. Your data lives in the `tallyloot` volume.
+Then open http://localhost:3000. Your data lives in the `tallyloot` volume. Images are built for Intel/AMD and ARM (Apple Silicon, Raspberry Pi).
+
+To upgrade, pull the new image and recreate the container; your data stays in the volume:
+
+```bash
+docker pull ghcr.io/johnpitchko/tallyloot
+docker rm -f tallyloot
+docker run -d -p 3000:80 -v tallyloot:/rails/storage --name tallyloot ghcr.io/johnpitchko/tallyloot
+```
+
+To build the image yourself instead, run `docker build -t tallyloot .` in a clone of this repo.
 
 Optional settings:
 
@@ -31,6 +40,10 @@ bin/setup     # install gems, prepare the database
 bin/dev       # start the app on http://localhost:3000
 bin/rails test
 ```
+
+## Releasing
+
+Push a version tag (e.g. `git tag v0.1.0 && git push origin v0.1.0`) and the Docker image workflow publishes `ghcr.io/johnpitchko/tallyloot` with that version and `latest`.
 
 ## License
 

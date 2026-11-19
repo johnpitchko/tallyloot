@@ -254,10 +254,7 @@
             With <a id="get-started-docker" href="https://docs.docker.com/get-docker/">Docker</a>
             installed, run:
           </p>
-          <pre id="get-started-command" class="install-command">git clone https://github.com/johnpitchko/tallyloot.git
-cd tallyloot
-docker build -t tallyloot .
-docker run -d -p 3000:80 -v tallyloot:/rails/storage --name tallyloot tallyloot</pre>
+          <pre id="get-started-command" class="install-command">docker run -d -p 3000:80 -v tallyloot:/rails/storage --name tallyloot ghcr.io/johnpitchko/tallyloot</pre>
           <p class="subtitle is-5 mt-5">
             Then open <strong>http://localhost:3000</strong>.
           </p>
