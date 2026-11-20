@@ -80,6 +80,20 @@ class SimulationTest < ActiveSupport::TestCase
     assert_equal 90, sim_john.life_expectancy
   end
 
+  test 'clamps age overrides to the range the models allow' do
+    params = { users: { @john.id.to_s => { life_expectancy: '99999999', retirement_age: '-5' } } }
+    sim = Simulation.new(@household, params)
+    sim_john = sim.projection.instance_variable_get(:@users).find { |u| u.id == @john.id }
+    assert_equal 120, sim_john.life_expectancy
+    assert_equal 0, sim_john.retirement_age
+  end
+
+  test 'age leaves blank values blank' do
+    assert_nil Simulation.age('')
+    assert_nil Simulation.age(nil)
+    assert_equal 65, Simulation.age('65')
+  end
+
   # ─── Account contribution ─────────────────────────────────────────────────────
 
   test 'overrides account contribution' do
