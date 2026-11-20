@@ -41,13 +41,14 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
             type=ref,event=branch
 
-      # Only a version tag publishes; pull requests and manual runs just check
-      # that the image builds for both architectures.
+      # Only a version tag publishes, for both architectures. Pull requests and
+      # manual runs just check that the image builds, on amd64 only: the arm64
+      # build runs under QEMU emulation and takes about 20 minutes.
       - name: Build and push
         uses: docker/build-push-action@v7
         with:
           context: .
-          platforms: linux/amd64,linux/arm64
+          platforms: ${{ startsWith(github.ref, 'refs/tags/v') && 'linux/amd64,linux/arm64' || 'linux/amd64' }}
           push: ${{ startsWith(github.ref, 'refs/tags/v') }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
