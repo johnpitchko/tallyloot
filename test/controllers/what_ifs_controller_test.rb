@@ -206,6 +206,16 @@ class WhatIfsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test 'out-of-range ages are clamped instead of projecting millions of years' do
+    sign_in
+    cpp = benefits(:cpp_john)
+    get what_if_path, params: {
+      users: { @user.id.to_s => { retirement_age: '99999999', pension_start_age: '-99999999' } },
+      benefits: { cpp.id.to_s => { start_age: '-99999999' } },
+    }
+    assert_response :success
+  end
+
   test 'changing OAS start age renders successfully' do
     sign_in
     oas = benefits(:oas_john)

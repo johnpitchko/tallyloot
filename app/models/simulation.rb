@@ -29,6 +29,13 @@ class Simulation
     def user_ages_in_year(year) = users.map { |u| u.age_in_year(year) }.join(', ')
   end
 
+  # The models validate ages to 0..120. Overrides arrive straight from the URL,
+  # so clamp them too: a crafted age would otherwise make projections and
+  # breakeven calculations iterate over millions of years.
+  MAX_AGE = 120
+
+  def self.age(value) = value.presence&.to_i&.clamp(0, MAX_AGE)
+
   def initialize(household, params)
     @household = household
     @params = params.to_h.with_indifferent_access
@@ -60,18 +67,18 @@ class Simulation
     portfolio
   end
 
-  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/AbcSize
   def sim_users
     @sim_users ||= @household.users.map do |u|
       p = (@params.dig(:users, u.id.to_s) || {}).with_indifferent_access
       u.dup.tap do |d|
         d.id = u.id
-        d.retirement_age = p[:retirement_age].presence&.to_i || u.retirement_age
-        d.life_expectancy = p[:life_expectancy].presence&.to_i || u.life_expectancy
+        d.retirement_age = Simulation.age(p[:retirement_age]) || u.retirement_age
+        d.life_expectancy = Simulation.age(p[:life_expectancy]) || u.life_expectancy
       end
     end
   end
-  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/AbcSize
 
   def sim_accounts
     @household.accounts.map do |account|
@@ -90,7 +97,7 @@ class Simulation
       p = (@params.dig(:pensions, pension.id.to_s) || {}).with_indifferent_access
       pension.dup.tap do |d|
         d.id = pension.id
-        d.start_age = p[:start_age].presence&.to_i || pension.start_age
+        d.start_age = Simulation.age(p[:start_age]) || pension.start_age
         # Point the association to the in-memory sim user so start_year and
         # income_eligible? resolve without a DB hit.
         d.association(:user).target = sim_users_by_id[pension.user_id]
@@ -104,7 +111,7 @@ class Simulation
       p = (@params.dig(:benefits, benefit.id.to_s) || {}).with_indifferent_access
       benefit.dup.tap do |d|
         d.id = benefit.id
-        d.start_age = p[:start_age].presence&.to_i || benefit.start_age
+        d.start_age = Simulation.age(p[:start_age]) || benefit.start_age
         # Point the association to the in-memory sim user so start_year and
         # income_eligible? resolve without a DB hit.
         d.association(:user).target = sim_users_by_id[benefit.user_id]
@@ -119,7 +126,7 @@ class Simulation
       employment.dup.tap do |d|
         d.id = employment.id
         d.annual_income = p[:annual_income].presence&.to_i || employment.annual_income
-        d.end_age = p[:end_age].presence&.to_i || employment.end_age
+        d.end_age = Simulation.age(p[:end_age]) || employment.end_age
         d.association(:user).target = sim_users_by_id[employment.user_id]
       end
     end
