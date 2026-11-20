@@ -78,6 +78,8 @@ docker run -d -p 3000:80 -v tallyloot:/rails/storage --name tallyloot tallyloot
 ```
 `bin/docker-entrypoint` generates `SECRET_KEY_BASE` on first boot and keeps it in the storage volume beside the SQLite databases. There are no Rails credentials.
 
+Pushing a `v*` tag publishes the image to `ghcr.io/johnpitchko/tallyloot` for amd64 and arm64 (`.github/workflows/docker.yml`).
+
 ### Website
 The project website lives in `site/`: static HTML with Bulma from a CDN, no build step. Preview it with `python3 -m http.server -d site`. Pushes to `main` that touch `site/` deploy it to GitHub Pages (`.github/workflows/pages.yml`).
 
