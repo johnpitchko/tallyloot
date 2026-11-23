@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_10_21_152207) do
+ActiveRecord::Schema[8.0].define(version: 2026_11_22_120000) do
   create_table "accounts", force: :cascade do |t|
     t.string "name"
     t.integer "balance"
@@ -113,6 +113,20 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_21_152207) do
     t.index ["household_id"], name: "index_portfolios_on_household_id"
   end
 
+  create_table "scenarios", force: :cascade do |t|
+    t.integer "household_id", null: false
+    t.text "raw_input", null: false
+    t.json "parsed_levers", default: [], null: false
+    t.json "confirmed_levers", default: [], null: false
+    t.string "status", default: "parsed", null: false
+    t.text "clarifying_question"
+    t.datetime "confirmed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["household_id"], name: "index_scenarios_on_household_id"
+    t.index ["status"], name: "index_scenarios_on_status"
+  end
+
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -132,5 +146,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_10_21_152207) do
   add_foreign_key "pensions", "users"
   add_foreign_key "portfolios", "glidepaths"
   add_foreign_key "portfolios", "households"
+  add_foreign_key "scenarios", "households"
   add_foreign_key "users", "households"
 end

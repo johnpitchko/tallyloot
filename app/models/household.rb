@@ -20,6 +20,7 @@ class Household < ApplicationRecord
   has_many :benefits, through: :users
   has_many :employments, through: :users, source: :employment
   has_one :portfolio, dependent: :destroy
+  has_many :scenarios, dependent: :destroy
 
   validates :province, inclusion: { in: PROVINCES }, allow_nil: true
 
